@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitchen — Ultra 50</title>
+<style>
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/opendyslexic@0.0.3/fonts/OpenDyslexic-Regular.woff2') format('woff2');
+  font-weight: normal;
+}
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/opendyslexic@0.0.3/fonts/OpenDyslexic-Bold.woff2') format('woff2');
+  font-weight: bold;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'OpenDyslexic',Arial,sans-serif;background:#f9f8f6;color:#1a1a1a;font-size:16px;line-height:1.9}
+.wrap{max-width:680px;margin:0 auto;padding:0 0 80px}
+/* NAV */
+.top-bar{background:#fff;border-bottom:1px solid #e5e5e3;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.top-bar-title{font-size:17px;font-weight:bold}
+.back-link{font-size:13px;color:#2563eb;text-decoration:none;border-bottom:1px solid #bfdbfe}
+.tab-bar{display:flex;background:#fff;border-bottom:1px solid #e5e5e3;position:sticky;top:49px;z-index:99}
+.tab{flex:1;padding:11px 4px;border:none;background:none;cursor:pointer;font-size:13px;font-family:'OpenDyslexic',Arial,sans-serif;color:#a3a3a3;font-weight:bold;border-bottom:3px solid transparent}
+.tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a}
+/* PANELS */
+.panel{display:none;padding:16px}
+.panel.active{display:block}
+/* RECIPE CARDS */
+.recipe-grid{display:flex;flex-direction:column;gap:12px}
+.recipe-card{background:#fff;border:1px solid #e5e5e3;border-radius:12px;padding:14px 16px;cursor:pointer;transition:border-color 0.15s}
+.recipe-card:hover{border-color:#a3a3a3}
+.recipe-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.recipe-name{font-size:16px;font-weight:bold;line-height:1.4}
+.recipe-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:bold}
+.tag-time{background:#fff7ed;color:#c2410c}
+.tag-cuisine{background:#eff6ff;color:#1d4ed8}
+.tag-veg{background:#f0fdf4;color:#15803d}
+.tag-fish{background:#e0f2fe;color:#0369a1}
+.tag-impressive{background:#faf5ff;color:#7e22ce}
+.tag-breakfast{background:#fefce8;color:#a16207}
+.tag-forage{background:#ecfdf5;color:#065f46}
+.recipe-desc{font-size:13px;color:#737373;margin-top:6px;line-height:1.7}
+/* FILTER ROW */
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.filter-btn{padding:5px 12px;border:1px solid #e5e5e3;border-radius:999px;background:#fff;cursor:pointer;font-size:12px;font-family:'OpenDyslexic',Arial,sans-serif;color:#737373;font-weight:bold}
+.filter-btn.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+/* COOK MODE */
+.cook-header{background:#fff;border:1px solid #e5e5e3;border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.cook-title{font-size:20px;font-weight:bold;margin-bottom:6px}
+.cook-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;color:#737373}
+.servings-ctrl{display:flex;align-items:center;gap:10px;margin-top:10px}
+.sv-btn{width:32px;height:32px;border:1px solid #e5e5e3;border-radius:6px;background:#fff;cursor:pointer;font-size:18px;font-family:'OpenDyslexic',Arial,sans-serif;display:flex;align-items:center;justify-content:center;line-height:1}
+.sv-num{font-size:16px;font-weight:bold;min-width:28px;text-align:center}
+.step-block{background:#fff;border:2px solid #e5e5e3;border-radius:12px;padding:20px;margin-bottom:12px;transition:border-color 0.2s}
+.step-block.active-step{border-color:#1a1a1a;background:#fafaf9}
+.step-num{font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;color:#a3a3a3;margin-bottom:8px}
+.step-text{font-size:17px;line-height:2;color:#1a1a1a}
+.step-text .amt{color:#2563eb;font-weight:bold}
+.step-text .action{font-weight:bold;color:#1a1a1a}
+.step-timer{display:inline-flex;align-items:center;gap:6px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:4px 10px;font-size:13px;color:#c2410c;font-weight:bold;margin-top:8px;cursor:pointer}
+.forage-note{display:flex;gap:8px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:8px 12px;font-size:13px;color:#065f46;margin-top:8px;line-height:1.6}
+.step-tip{font-size:13px;color:#737373;background:#f9f8f6;border-radius:6px;padding:6px 10px;margin-top:6px;line-height:1.7}
+.cook-nav{display:flex;gap:10px;margin-top:16px;align-items:center}
+.cook-btn{flex:1;padding:14px;border:1px solid #e5e5e3;border-radius:10px;background:#fff;cursor:pointer;font-size:15px;font-family:'OpenDyslexic',Arial,sans-serif;font-weight:bold;color:#1a1a1a}
+.cook-btn.primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.cook-btn:disabled{opacity:0.3;cursor:default}
+.speak-btn{padding:10px 14px;border:1px solid #e5e5e3;border-radius:10px;background:#fff;cursor:pointer;font-size:14px;font-family:'OpenDyslexic',Arial,sans-serif}
+.speak-btn.speaking{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+.ingredients-list{background:#f9f8f6;border-radius:10px;padding:14px;margin-bottom:14px}
+.ing-section-title{font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;color:#a3a3a3;margin-bottom:6px;margin-top:12px}
+.ing-section-title:first-child{margin-top:0}
+.ing-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #f0f0ef;font-size:14px}
+.ing-row:last-child{border-bottom:none}
+.ing-amt{font-weight:bold;color:#2563eb;min-width:80px;font-size:14px}
+.ing-name{flex:1}
+.ing-garden{font-size:10px;background:#f0fdf4;color:#15803d;padding:1px 6px;border-radius:999px;font-weight:bold}
+/* PANTRY */
+.pantry-section{margin-bottom:20px}
+.pantry-section-title{font-size:13px;font-weight:bold;text-transform:uppercase;letter-spacing:0.06em;color:#a3a3a3;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #f0f0ef}
+.pantry-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pantry-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #e5e5e3;border-radius:8px;cursor:pointer;background:#fff;font-size:13px;font-family:'OpenDyslexic',Arial,sans-serif}
+.pantry-item.have{background:#f0fdf4;border-color:#86efac;color:#15803d}
+.pantry-check{width:18px;height:18px;border:1.5px solid #d4d4d2;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px}
+.pantry-item.have .pantry-check{background:#16a34a;border-color:#16a34a;color:#fff}
+.available-card{background:#fff;border:1px solid #e5e5e3;border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.available-card:hover{border-color:#a3a3a3}
+.available-name{font-size:15px;font-weight:bold}
+.available-missing{font-size:12px;color:#ea580c;margin-top:3px}
+.available-have{font-size:12px;color:#16a34a;margin-top:3px}
+.section-header{font-size:14px;font-weight:bold;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.section-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* SHOPPING */
+.shop-section{margin-bottom:18px}
+.shop-section-title{font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:0.06em;color:#a3a3a3;margin-bottom:8px;padding:6px 0;border-bottom:1px solid #f0f0ef;display:flex;align-items:center;gap:6px}
+.shop-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #f9f8f6;cursor:pointer}
+.shop-check{width:22px;height:22px;border:1.5px solid #d4d4d2;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;background:#fff}
+.shop-item.checked .shop-check{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+.shop-item.checked .shop-item-name{text-decoration:line-through;color:#a3a3a3}
+.shop-item-name{flex:1;font-size:15px;line-height:1.5}
+.shop-item-source{font-size:11px;color:#a3a3a3}
+.shop-add-row{display:flex;gap:8px;margin-bottom:16px}
+.shop-input{flex:1;padding:10px 12px;border:1px solid #e5e5e3;border-radius:8px;font-size:14px;font-family:'OpenDyslexic',Arial,sans-serif;background:#fff}
+.shop-add-btn{padding:10px 16px;border:1px solid #1a1a1a;border-radius:8px;background:#1a1a1a;color:#fff;cursor:pointer;font-size:13px;font-family:'OpenDyslexic',Arial,sans-serif;font-weight:bold;white-space:nowrap}
+.shop-clear-btn{padding:6px 12px;border:1px solid #e5e5e3;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;font-family:'OpenDyslexic',Arial,sans-serif;color:#737373}
+.garden-note{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;font-size:13px;color:#15803d;margin-bottom:12px;line-height:1.6}
+/* SPICE KIT */
+.spice-kit{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px;margin-bottom:16px}
+.spice-kit-title{font-size:13px;font-weight:bold;color:#c2410c;margin-bottom:8px}
+/* TIMER */
+.timer-overlay{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:12px 24px;border-radius:999px;font-size:20px;font-weight:bold;font-family:'OpenDyslexic',Arial,sans-serif;z-index:200;display:none;align-items:center;gap:12px}
+.timer-cancel{background:none;border:1px solid #fff;border-radius:999px;color:#fff;padding:4px 12px;cursor:pointer;font-size:13px;font-family:'OpenDyslexic',Arial,sans-serif}
+/* MISC */
+.empty-state{text-align:center;padding:3rem 1rem;color:#a3a3a3;font-size:14px;line-height:2}
+.badge-impressive{display:inline-block;background:#faf5ff;color:#7e22ce;border:1px solid #e9d5ff;border-radius:6px;font-size:11px;padding:2px 8px;font-weight:bold;margin-left:6px}
+.unit-toggle{font-size:11px;background:#f5f5f3;border:1px solid #e5e5e3;border-radius:4px;padding:2px 6px;cursor:pointer;margin-left:4px;font-family:'OpenDyslexic',Arial,sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-bar">
+    <a href="index.html" class="back-link">← Dashboard</a>
+    <div class="top-bar-title">Kitchen</div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('recipes')">Recipes</button>
+    <button class="tab" onclick="showTab('cook')">Cook</button>
+    <button class="tab" onclick="showTab('pantry')">Pantry</button>
+    <button class="tab" onclick="showTab('shop')">Shop</button>
+  </div>
+  <div id="panel-recipes" class="panel active"></div>
+  <div id="panel-cook" class="panel"></div>
+  <div id="panel-pantry" class="panel"></div>
+  <div id="panel-shop" class="panel"></div>
+</div>
+<div class="timer-overlay" id="timer-overlay">
+  <span id="timer-display">0:00</span>
+  <button class="timer-cancel" onclick="cancelTimer()">cancel</button>
+</div>
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const RECIPES = [
+  {
+    id:'r01', name:'Mushroom & Cheese Omelette', category:'breakfast', cuisine:'American',
+    time:12, impressive:false, forageable:true,
+    desc:'Silky folded omelette with sautéed mushrooms and melted cheese. The benchmark breakfast.',
+    tags:['vegetarian','mushroom','quick'],
+    ingredients:[
+      {name:'eggs',amt:3,unit:'large',section:'dairy',pantry:false},
+      {name:'mushrooms, sliced',amt:1,unit:'cup',section:'produce',pantry:false,forage:'Wild chanterelles or hen-of-the-woods would be extraordinary here'},
+      {name:'cheddar or gruyère, grated',amt:'¼',unit:'cup',section:'dairy',pantry:false},
+      {name:'butter',amt:1,unit:'tbsp',section:'dairy',pantry:true},
+      {name:'fresh thyme (optional)',amt:'2',unit:'sprigs',section:'produce',pantry:false},
+      {name:'salt and black pepper',amt:'',unit:'to taste',section:'pantry',pantry:true},
+    ],
+    steps:[
+      {text:'Crack <amt>3 large eggs</amt> into a bowl. Add a pinch of salt. <action>Beat</action> with a fork until the yolk and white are fully combined — about 30 seconds.',timer:0,tip:'Don't over-beat. You want it uniform, not foamy.'},
+      {text:'<action>Heat</action> a non-stick pan over medium-high. Add <amt>1 tbsp butter</amt> and let it melt and foam.',timer:0,tip:'When the foam starts to subside, the pan is ready.'},
+      {text:'<action>Add</action> <amt>1 cup sliced mushrooms</amt> to the pan. <action>Cook</action> without stirring for 2 minutes until they brown on one side.',timer:120,tip:'Resist the urge to stir — let them get golden.',forage:'Fresh foraged chanterelles or hen-of-the-woods: add 30 extra seconds here.'},
+      {text:'<action>Stir</action> the mushrooms, then push them to the side of the pan.',timer:0},
+      {text:'<action>Pour</action> the beaten eggs into the empty side of the pan. Let them sit for 15 seconds without touching.',timer:15},
+      {text:'With a spatula, <action>push</action> the cooked egg edges toward the center, tilting the pan so raw egg flows to the edges. Repeat until the top is just barely wet.',timer:0,tip:'This is the technique. Slow and steady.'},
+      {text:'<action>Scatter</action> <amt>¼ cup grated cheese</amt> and the mushrooms across one half of the omelette.',timer:0},
+      {text:'<action>Fold</action> the empty half over the filling. <action>Slide</action> onto a plate immediately.',timer:0,tip:'The residual heat finishes melting the cheese perfectly.'},
+    ]
+  },
+  {
+    id:'r02', name:'Blackened Baja Fish Tacos', category:'impressive', cuisine:'Mexican',
+    time:25, impressive:true, forageable:false,
+    desc:'Crispy blackened white fish, crunchy slaw, lime crema, fresh pico. Looks like a restaurant. Done in 25 minutes.',
+    tags:['pescatarian','fish','impressive','30-min'],
+    ingredients:[
+      {name:'white fish fillets (cod, mahi, tilapia)',amt:2,unit:'6oz pieces',section:'protein',pantry:false},
+      {name:'smoked paprika',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'cumin',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'garlic powder',amt:'½',unit:'tsp',section:'pantry',pantry:true},
+      {name:'cayenne',amt:'¼',unit:'tsp',section:'pantry',pantry:true},
+      {name:'dried oregano',amt:'½',unit:'tsp',section:'pantry',pantry:true},
+      {name:'salt',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'olive oil',amt:2,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'corn tortillas',amt:6,unit:'small',section:'pantry',pantry:false},
+      {name:'cabbage, thinly shredded',amt:2,unit:'cups',section:'produce',pantry:false},
+      {name:'lime',amt:2,unit:'whole',section:'produce',pantry:false},
+      {name:'sour cream or Greek yogurt',amt:'¼',unit:'cup',section:'dairy',pantry:false},
+      {name:'fresh cilantro',amt:'handful',unit:'',section:'produce',pantry:false},
+      {name:'tomato, diced (or from garden)',amt:1,unit:'medium',section:'garden',pantry:false},
+      {name:'jalapeño, minced',amt:'½',unit:'whole',section:'produce',pantry:false},
+      {name:'red onion, minced',amt:2,unit:'tbsp',section:'produce',pantry:false},
+    ],
+    steps:[
+      {text:'<action>Mix</action> together in a small bowl: <amt>1 tsp smoked paprika</amt>, <amt>1 tsp cumin</amt>, <amt>½ tsp garlic powder</amt>, <amt>¼ tsp cayenne</amt>, <amt>½ tsp oregano</amt>, <amt>1 tsp salt</amt>. This is your blackening spice.',timer:0,tip:'Make a double batch and keep the rest. You'll use it again.'},
+      {text:'<action>Make the pico</action>: Combine diced <amt>1 tomato</amt>, <amt>2 tbsp red onion</amt>, <amt>½ jalapeño</amt>, a handful of cilantro, and the juice of <amt>½ lime</amt> in a small bowl. Set aside.',timer:0},
+      {text:'<action>Make the crema</action>: Stir together <amt>¼ cup sour cream</amt> with the juice of <amt>½ lime</amt> and a pinch of salt. Set aside.',timer:0},
+      {text:'<action>Toss</action> <amt>2 cups shredded cabbage</amt> with the juice of <amt>½ lime</amt> and a pinch of salt. Set aside.',timer:0},
+      {text:'<action>Pat</action> the <amt>2 fish fillets</amt> completely dry with paper towels. This is important for blackening.',timer:0,tip:'Wet fish steams instead of blackening. Dry it thoroughly.'},
+      {text:'<action>Press</action> the blackening spice firmly onto both sides of each fillet.',timer:0},
+      {text:'<action>Heat</action> a cast iron or heavy pan over high heat for 2 minutes. Add <amt>2 tbsp olive oil</amt>.',timer:120},
+      {text:'<action>Place</action> the fillets in the pan. Do not move them. <action>Cook</action> for 3 minutes until a dark crust forms.',timer:180,tip:'It will smoke. That's correct. Open a window.'},
+      {text:'<action>Flip</action> once. <action>Cook</action> for another 2 minutes. Remove from heat.',timer:120},
+      {text:'<action>Warm</action> the corn tortillas directly over a gas flame for 20 seconds per side, or in a dry pan.',timer:0},
+      {text:'<action>Break</action> the fish into chunks. <action>Build</action> each taco: tortilla → slaw → fish → pico → crema → squeeze of lime.',timer:0,tip:'Serve immediately. These do not wait.'},
+    ]
+  },
+  {
+    id:'r03', name:'Shakshuka', category:'weeknight', cuisine:'Mediterranean',
+    time:25, impressive:true, forageable:true,
+    desc:'Eggs poached in spiced tomato and pepper sauce. One pan, deeply satisfying, works for breakfast or dinner.',
+    tags:['vegetarian','mushroom','impressive','one-pan'],
+    ingredients:[
+      {name:'eggs',amt:4,unit:'large',section:'dairy',pantry:false},
+      {name:'canned crushed tomatoes',amt:1,unit:'14oz can',section:'pantry',pantry:true},
+      {name:'red bell pepper, diced',amt:1,unit:'medium',section:'produce',pantry:false},
+      {name:'yellow onion, diced',amt:'½',unit:'medium',section:'produce',pantry:false},
+      {name:'garlic cloves, minced',amt:3,unit:'cloves',section:'produce',pantry:true},
+      {name:'mushrooms, sliced (optional)',amt:1,unit:'cup',section:'produce',pantry:false,forage:'Any wild mushroom is fantastic here. Add with the peppers.'},
+      {name:'cumin',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'smoked paprika',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'chili flakes',amt:'¼',unit:'tsp',section:'pantry',pantry:true},
+      {name:'olive oil',amt:2,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'salt',amt:'',unit:'to taste',section:'pantry',pantry:true},
+      {name:'fresh parsley or cilantro',amt:'handful',unit:'',section:'produce',pantry:false},
+      {name:'feta cheese (optional)',amt:'¼',unit:'cup',section:'dairy',pantry:false},
+      {name:'sourdough or pita for dipping',amt:2,unit:'pieces',section:'pantry',pantry:false},
+    ],
+    steps:[
+      {text:'<action>Heat</action> <amt>2 tbsp olive oil</amt> in a large oven-safe pan over medium heat.',timer:0},
+      {text:'<action>Add</action> <amt>½ diced onion</amt> and <amt>1 diced bell pepper</amt>. <action>Cook</action>, stirring occasionally, for 5 minutes until softened.',timer:300,forage:'Add <amt>1 cup sliced mushrooms</amt> here if using. Cook together.'},
+      {text:'<action>Add</action> <amt>3 minced garlic cloves</amt>, <amt>1 tsp cumin</amt>, <amt>1 tsp smoked paprika</amt>, <amt>¼ tsp chili flakes</amt>. <action>Stir</action> for 30 seconds.',timer:30,tip:'You'll smell when the spices are bloomed — fragrant and slightly deeper.'},
+      {text:'<action>Pour in</action> the <amt>14oz can of crushed tomatoes</amt>. Add a pinch of salt. <action>Stir</action> to combine.',timer:0},
+      {text:'<action>Simmer</action> over medium-low for 8 minutes, stirring occasionally, until the sauce thickens slightly.',timer:480},
+      {text:'Use a spoon to <action>make 4 wells</action> in the sauce. <action>Crack</action> one egg into each well.',timer:0,tip:'Crack eggs into a cup first if you're nervous about shells.'},
+      {text:'<action>Cover</action> the pan. <action>Cook</action> for 5–7 minutes — 5 for runny yolks, 7 for set yolks.',timer:300,tip:'Check at 5 minutes by gently pressing the white near the yolk. Firm white = ready.'},
+      {text:'<action>Remove</action> from heat. <action>Scatter</action> crumbled feta and fresh herbs over the top.',timer:0},
+      {text:'<action>Serve</action> directly from the pan with bread for dipping. Do not transfer to plates.',timer:0,tip:'Eating from the pan is the correct move here.'},
+    ]
+  },
+  {
+    id:'r04', name:'Shrimp Aglio e Olio', category:'impressive', cuisine:'Italian',
+    time:20, impressive:true, forageable:false,
+    desc:'Pasta, garlic, olive oil, shrimp, chili. Five ingredients, twenty minutes, genuinely impressive.',
+    tags:['pescatarian','shrimp','impressive','quick'],
+    ingredients:[
+      {name:'spaghetti or linguine',amt:200,unit:'g',section:'pantry',pantry:true},
+      {name:'large shrimp, peeled and deveined',amt:300,unit:'g',section:'protein',pantry:false},
+      {name:'garlic cloves, thinly sliced',amt:6,unit:'cloves',section:'produce',pantry:true},
+      {name:'olive oil, good quality',amt:'⅓',unit:'cup',section:'pantry',pantry:true},
+      {name:'chili flakes',amt:'½',unit:'tsp',section:'pantry',pantry:true},
+      {name:'fresh parsley, chopped',amt:'large handful',unit:'',section:'produce',pantry:false},
+      {name:'lemon',amt:1,unit:'whole',section:'produce',pantry:false},
+      {name:'parmesan (optional for fish — breaks tradition but tastes good)',amt:'',unit:'',section:'dairy',pantry:false},
+      {name:'salt',amt:'',unit:'for pasta water',section:'pantry',pantry:true},
+    ],
+    steps:[
+      {text:'<action>Bring</action> a large pot of water to a boil. Salt it heavily — it should taste like the sea. <action>Cook</action> <amt>200g pasta</amt> until 2 minutes shy of al dente. Reserve <amt>1 cup pasta water</amt> before draining.',timer:0,tip:'The pasta will finish cooking in the sauce. Undercook it here.'},
+      {text:'While pasta cooks: <action>heat</action> <amt>⅓ cup olive oil</amt> in a large pan over medium-low heat.',timer:0},
+      {text:'<action>Add</action> <amt>6 sliced garlic cloves</amt> to the oil. <action>Cook</action> slowly for 3–4 minutes until golden at the edges. Watch it — burnt garlic means starting over.',timer:240,tip:'Low and slow. The garlic should sizzle gently, not fry aggressively.'},
+      {text:'<action>Add</action> <amt>½ tsp chili flakes</amt>. <action>Stir</action> for 30 seconds.',timer:30},
+      {text:'<action>Add</action> <amt>300g shrimp</amt> in a single layer. <action>Cook</action> without moving for 90 seconds until pink on one side.',timer:90},
+      {text:'<action>Flip</action> each shrimp. <action>Cook</action> 60 more seconds. Remove shrimp from pan and set aside.',timer:60,tip:'Shrimp overcook fast. They're done when they curl into a loose C shape.'},
+      {text:'<action>Add</action> the drained pasta to the garlicky oil. <action>Toss</action> with a splash of pasta water. Add more water bit by bit until the pasta is glossy and sauced.',timer:0,tip:'The pasta water is magic — starch emulsifies the oil into a real sauce.'},
+      {text:'<action>Return</action> the shrimp to the pan. <action>Add</action> the parsley and a squeeze of lemon. <action>Toss</action> to combine.',timer:0},
+      {text:'<action>Taste</action>. Adjust salt. <action>Serve</action> immediately.',timer:0},
+    ]
+  },
+  {
+    id:'r05', name:'Thai Basil Mushroom Fried Rice', category:'weeknight', cuisine:'Thai',
+    time:20, impressive:false, forageable:true,
+    desc:'Better than takeout. Day-old rice, mushrooms, Thai basil, fish sauce, a fried egg on top.',
+    tags:['vegetarian','mushroom','quick','one-pan'],
+    ingredients:[
+      {name:'cooked rice (day-old is best)',amt:2,unit:'cups',section:'pantry',pantry:true},
+      {name:'mushrooms, sliced',amt:2,unit:'cups',section:'produce',pantry:false,forage:'Shiitake, oyster, or any wild mushroom elevates this significantly'},
+      {name:'eggs',amt:2,unit:'large',section:'dairy',pantry:false},
+      {name:'garlic cloves, minced',amt:3,unit:'cloves',section:'produce',pantry:true},
+      {name:'Thai basil or regular basil',amt:1,unit:'large handful',section:'produce',pantry:false},
+      {name:'soy sauce',amt:2,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'oyster sauce',amt:1,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'fish sauce',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'sesame oil',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'neutral oil (vegetable or coconut)',amt:2,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'chili flakes or fresh chili',amt:'½',unit:'tsp',section:'pantry',pantry:true},
+      {name:'green onions',amt:3,unit:'stalks',section:'produce',pantry:false},
+    ],
+    steps:[
+      {text:'<action>Mix</action> the sauce: combine <amt>2 tbsp soy sauce</amt>, <amt>1 tbsp oyster sauce</amt>, <amt>1 tsp fish sauce</amt>, <amt>1 tsp sesame oil</amt> in a small bowl. Set aside.',timer:0,tip:'Having the sauce ready before you start is the key to fried rice success.'},
+      {text:'<action>Heat</action> <amt>2 tbsp oil</amt> in a wok or large cast iron over the highest heat your stove allows.',timer:0,tip:'High heat is the whole secret. Let it rip.'},
+      {text:'<action>Add</action> <amt>2 cups mushrooms</amt>. <action>Leave them alone</action> for 90 seconds to brown.',timer:90,forage:'Wild mushrooms: cook 2 extra minutes before proceeding.'},
+      {text:'<action>Add</action> <amt>3 minced garlic cloves</amt> and <amt>½ tsp chili</amt>. <action>Stir</action> for 30 seconds.',timer:30},
+      {text:'<action>Push</action> everything to one side. Crack both eggs into the empty side. <action>Scramble</action> quickly until just set.',timer:0},
+      {text:'<action>Add</action> <amt>2 cups rice</amt>. <action>Break</action> up any clumps. <action>Toss</action> everything together.',timer:0,tip:'Keep moving everything constantly now.'},
+      {text:'<action>Pour</action> the sauce over the rice. <action>Toss</action> for 60 seconds until everything is coated and fragrant.',timer:60},
+      {text:'<action>Remove</action> from heat. <action>Fold in</action> the basil and green onions.',timer:0,tip:'The residual heat wilts the basil perfectly without cooking it.'},
+      {text:'<action>Serve</action> in bowls. Top with a fried egg if you want to make it extra.',timer:0},
+    ]
+  },
+  {
+    id:'r06', name:'Miso-Glazed Salmon', category:'impressive', cuisine:'Japanese',
+    time:20, impressive:true, forageable:false,
+    desc:'The salmon recipe that converts people who don't like salmon. Miso, mirin, sake — caramelized and incredible.',
+    tags:['pescatarian','fish','impressive'],
+    ingredients:[
+      {name:'salmon fillets',amt:2,unit:'6oz pieces',section:'protein',pantry:false},
+      {name:'white miso paste',amt:3,unit:'tbsp',section:'pantry',pantry:false},
+      {name:'mirin',amt:2,unit:'tbsp',section:'pantry',pantry:false},
+      {name:'sake or dry white wine',amt:1,unit:'tbsp',section:'pantry',pantry:false},
+      {name:'sugar',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'sesame seeds',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'green onions',amt:3,unit:'stalks',section:'produce',pantry:false},
+    ],
+    steps:[
+      {text:'<action>Whisk</action> together: <amt>3 tbsp white miso</amt>, <amt>2 tbsp mirin</amt>, <amt>1 tbsp sake</amt>, <amt>1 tsp sugar</amt> until smooth.',timer:0},
+      {text:'<action>Pat</action> the salmon completely dry. <action>Coat</action> both sides generously with the miso glaze. <action>Marinate</action> for at least 30 minutes — overnight is better.',timer:1800,tip:'Even 30 minutes transforms the fish. This is where the magic happens.'},
+      {text:'<action>Preheat</action> your oven broiler to high. Line a baking sheet with foil and lightly oil it.',timer:0},
+      {text:'<action>Wipe off</action> the excess marinade from the salmon — leave a thin coat but not thick gobs. Thick miso burns before the fish cooks.',timer:0,tip:'This step matters. A thin glaze caramelizes; a thick glaze burns black.'},
+      {text:'<action>Place</action> salmon skin-side down on the baking sheet. <action>Broil</action> 6 inches from the heat for 8–10 minutes.',timer:480,tip:'Watch it after 7 minutes. You want dark caramelized patches — not charred black.'},
+      {text:'<action>Remove</action> when the glaze is caramelized and the flesh flakes when you press it gently.',timer:0},
+      {text:'<action>Scatter</action> sesame seeds and sliced green onions over the top. <action>Serve</action> with steamed rice.',timer:0},
+    ]
+  },
+  {
+    id:'r07', name:'Chickpea & Spinach Curry', category:'weeknight', cuisine:'Indian',
+    time:30, impressive:false, forageable:false,
+    desc:'One pan, two cans, thirty minutes. Genuinely good weeknight curry that gets better the next day.',
+    tags:['vegetarian','vegan','one-pan'],
+    ingredients:[
+      {name:'canned chickpeas, drained',amt:2,unit:'14oz cans',section:'pantry',pantry:true},
+      {name:'canned crushed tomatoes',amt:1,unit:'14oz can',section:'pantry',pantry:true},
+      {name:'spinach or baby spinach',amt:3,unit:'cups',section:'produce',pantry:false},
+      {name:'yellow onion, diced',amt:1,unit:'medium',section:'produce',pantry:false},
+      {name:'garlic cloves, minced',amt:4,unit:'cloves',section:'produce',pantry:true},
+      {name:'fresh ginger, grated',amt:1,unit:'tbsp',section:'produce',pantry:false},
+      {name:'coconut milk',amt:'½',unit:'cup',section:'pantry',pantry:false},
+      {name:'garam masala',amt:2,unit:'tsp',section:'pantry',pantry:true},
+      {name:'cumin',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'turmeric',amt:'½',unit:'tsp',section:'pantry',pantry:true},
+      {name:'olive oil',amt:2,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'salt',amt:'',unit:'to taste',section:'pantry',pantry:true},
+      {name:'rice or naan for serving',amt:'',unit:'',section:'pantry',pantry:true},
+      {name:'fresh cilantro (optional)',amt:'handful',unit:'',section:'produce',pantry:false},
+    ],
+    steps:[
+      {text:'<action>Heat</action> <amt>2 tbsp olive oil</amt> in a large pan over medium. <action>Add</action> <amt>1 diced onion</amt>. <action>Cook</action> for 6 minutes, stirring occasionally, until golden.',timer:360},
+      {text:'<action>Add</action> <amt>4 minced garlic cloves</amt> and <amt>1 tbsp grated ginger</amt>. <action>Stir</action> for 60 seconds.',timer:60},
+      {text:'<action>Add</action> <amt>2 tsp garam masala</amt>, <amt>1 tsp cumin</amt>, <amt>½ tsp turmeric</amt>. <action>Stir</action> for 30 seconds to bloom the spices.',timer:30,tip:'The spices hitting the hot oil is called blooming. It doubles their flavor.'},
+      {text:'<action>Add</action> the <amt>can of crushed tomatoes</amt>. <action>Stir</action> and let simmer for 3 minutes.',timer:180},
+      {text:'<action>Add</action> both <amt>cans of chickpeas</amt> and <amt>½ cup coconut milk</amt>. Season with salt. <action>Simmer</action> for 10 minutes.',timer:600},
+      {text:'<action>Add</action> <amt>3 cups spinach</amt>. <action>Stir</action> until wilted, about 2 minutes.',timer:120},
+      {text:'<action>Taste</action>. Adjust salt. <action>Serve</action> over rice with fresh cilantro.',timer:0,tip:'A squeeze of lemon at the end brightens everything significantly.'},
+    ]
+  },
+  {
+    id:'r08', name:'Mushroom Ramen', category:'weeknight', cuisine:'Japanese',
+    time:30, impressive:true, forageable:true,
+    desc:'Proper mushroom broth ramen. Deeply savory, warming, and a perfect showcase for foraged mushrooms.',
+    tags:['vegetarian','mushroom','impressive'],
+    ingredients:[
+      {name:'ramen noodles (or any thin noodle)',amt:2,unit:'portions',section:'pantry',pantry:false},
+      {name:'mushrooms (mixed varieties)',amt:3,unit:'cups',section:'produce',pantry:false,forage:'This is the ideal recipe for foraged mushrooms. Maitake, chanterelle, or porcini all shine here.'},
+      {name:'vegetable or dashi broth',amt:4,unit:'cups',section:'pantry',pantry:false},
+      {name:'white miso paste',amt:3,unit:'tbsp',section:'pantry',pantry:false},
+      {name:'soy sauce',amt:2,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'garlic cloves, minced',amt:3,unit:'cloves',section:'produce',pantry:true},
+      {name:'fresh ginger, sliced',amt:1,unit:'inch piece',section:'produce',pantry:false},
+      {name:'sesame oil',amt:1,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'soft-boiled eggs',amt:2,unit:'large',section:'dairy',pantry:false},
+      {name:'green onions',amt:4,unit:'stalks',section:'produce',pantry:false},
+      {name:'nori sheets (optional)',amt:2,unit:'sheets',section:'pantry',pantry:false},
+      {name:'chili oil or sesame chili paste',amt:'',unit:'to taste',section:'pantry',pantry:false},
+    ],
+    steps:[
+      {text:'<action>Make the soft-boiled eggs first</action>: Bring water to a boil. <action>Lower</action> eggs in gently. <action>Cook</action> exactly 7 minutes. Transfer to ice water for 3 minutes. Peel carefully.',timer:420,tip:'7 minutes is the magic number for a jammy, bright orange yolk.'},
+      {text:'<action>Heat</action> <amt>1 tbsp sesame oil</amt> in a pot over medium-high. <action>Add</action> <amt>3 cups mushrooms</amt>. <action>Cook</action> without stirring for 3 minutes.',timer:180,forage:'Foraged mushrooms: cook 4–5 minutes. Their flavor is deeper and they need more time.'},
+      {text:'<action>Add</action> <amt>3 minced garlic cloves</amt> and the <amt>sliced ginger</amt>. <action>Stir</action> for 60 seconds.',timer:60},
+      {text:'<action>Add</action> <amt>2 tbsp soy sauce</amt>. Let it sizzle for 20 seconds.',timer:20},
+      {text:'<action>Pour in</action> <amt>4 cups broth</amt>. <action>Bring</action> to a gentle simmer.',timer:0},
+      {text:'<action>Scoop out</action> a ladleful of hot broth into a small bowl. <action>Whisk</action> in <amt>3 tbsp miso paste</amt> until smooth. <action>Pour</action> the miso mixture back into the pot.',timer:0,tip:'Never boil miso — it kills the beneficial enzymes. Add it off direct heat.'},
+      {text:'<action>Cook</action> the noodles in a separate pot according to package directions.',timer:0},
+      {text:'<action>Build</action> the bowls: noodles first, then ladle broth and mushrooms over. <action>Halve</action> the soft-boiled eggs and place on top.',timer:0},
+      {text:'<action>Top</action> with sliced green onions, nori, and a drizzle of chili oil.',timer:0},
+    ]
+  },
+  {
+    id:'r09', name:'French Toast with Berries', category:'breakfast', cuisine:'American',
+    time:15, impressive:true, forageable:false,
+    desc:'Thick eggy French toast with caramelized edges. Sweet with maple syrup and fresh berries or jam.',
+    tags:['vegetarian','breakfast','impressive','quick'],
+    ingredients:[
+      {name:'thick bread (brioche, sourdough, or challah)',amt:4,unit:'thick slices',section:'pantry',pantry:false},
+      {name:'eggs',amt:3,unit:'large',section:'dairy',pantry:false},
+      {name:'whole milk or oat milk',amt:'¼',unit:'cup',section:'dairy',pantry:false},
+      {name:'vanilla extract',amt:'½',unit:'tsp',section:'pantry',pantry:true},
+      {name:'cinnamon',amt:'¼',unit:'tsp',section:'pantry',pantry:true},
+      {name:'butter',amt:2,unit:'tbsp',section:'dairy',pantry:true},
+      {name:'maple syrup',amt:'',unit:'for serving',section:'pantry',pantry:true},
+      {name:'fresh berries or jam',amt:'',unit:'for serving',section:'produce',pantry:false},
+      {name:'powdered sugar (optional)',amt:'',unit:'dusting',section:'pantry',pantry:true},
+    ],
+    steps:[
+      {text:'<action>Whisk</action> together: <amt>3 eggs</amt>, <amt>¼ cup milk</amt>, <amt>½ tsp vanilla</amt>, <amt>¼ tsp cinnamon</amt>, and a pinch of salt in a shallow bowl.',timer:0},
+      {text:'<action>Heat</action> a pan over medium. <action>Add</action> <amt>1 tbsp butter</amt> and let it melt and foam.',timer:0},
+      {text:'<action>Dip</action> a slice of bread into the egg mixture. <action>Let it soak</action> for 15 seconds per side.',timer:0,tip:'Thick bread benefits from a longer soak. Thin bread goes soggy — be quick.'},
+      {text:'<action>Place</action> the soaked bread in the pan. <action>Cook</action> without moving for 2–3 minutes until the underside is deep golden brown.',timer:150,tip:'Resist the urge to check too early. The caramelization is the whole point.'},
+      {text:'<action>Flip</action> once. <action>Cook</action> for 2 more minutes.',timer:120},
+      {text:'<action>Repeat</action> with remaining slices, adding more butter as needed.',timer:0},
+      {text:'<action>Serve</action> immediately with maple syrup, berries, and a dusting of powdered sugar if you're feeling it.',timer:0},
+    ]
+  },
+  {
+    id:'r10', name:'Mediterranean Grain Bowl', category:'weeknight', cuisine:'Mediterranean',
+    time:20, impressive:false, forageable:false,
+    desc:'Quinoa or farro, roasted veg, chickpeas, feta, herbs, lemon tahini dressing. Meal prep friendly.',
+    tags:['vegetarian','vegan','meal-prep'],
+    ingredients:[
+      {name:'quinoa or farro',amt:1,unit:'cup dry',section:'pantry',pantry:true},
+      {name:'chickpeas, drained',amt:1,unit:'14oz can',section:'pantry',pantry:true},
+      {name:'cherry tomatoes (or from garden)',amt:1,unit:'cup',section:'garden',pantry:false},
+      {name:'cucumber, diced',amt:1,unit:'medium',section:'produce',pantry:false},
+      {name:'red onion, thinly sliced',amt:'¼',unit:'medium',section:'produce',pantry:false},
+      {name:'feta cheese',amt:'¼',unit:'cup crumbled',section:'dairy',pantry:false},
+      {name:'fresh parsley',amt:'large handful',unit:'',section:'produce',pantry:false},
+      {name:'tahini',amt:2,unit:'tbsp',section:'pantry',pantry:false},
+      {name:'lemon',amt:1,unit:'whole',section:'produce',pantry:false},
+      {name:'garlic clove',amt:1,unit:'clove',section:'produce',pantry:true},
+      {name:'olive oil',amt:3,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'za'atar (optional)',amt:1,unit:'tsp',section:'pantry',pantry:false},
+    ],
+    steps:[
+      {text:'<action>Cook</action> <amt>1 cup quinoa</amt> in 2 cups of salted water. <action>Bring</action> to a boil, then <action>cover</action> and <action>reduce</action> to a simmer for 15 minutes.',timer:900},
+      {text:'<action>Make the dressing</action>: Whisk together <amt>2 tbsp tahini</amt>, juice of <amt>1 lemon</amt>, <amt>1 minced garlic clove</amt>, <amt>2 tbsp olive oil</amt>, and 2–3 tbsp water until smooth.',timer:0,tip:'Add water slowly — the dressing will seize up before it loosens. Keep whisking.'},
+      {text:'<action>Drain and rinse</action> the chickpeas. <action>Toss</action> with <amt>1 tbsp olive oil</amt>, salt, and za'atar if using.',timer:0},
+      {text:'<action>Fluff</action> the cooked quinoa with a fork. <action>Let</action> it cool for 5 minutes.',timer:300},
+      {text:'<action>Build</action> the bowl: quinoa base, then arrange chickpeas, tomatoes, cucumber, red onion on top.',timer:0},
+      {text:'<action>Add</action> crumbled feta and fresh parsley. <action>Drizzle</action> the tahini dressing generously.',timer:0},
+      {text:'<action>Taste</action>. Add more lemon or salt as needed. <action>Serve</action> immediately or refrigerate — it holds well for 2 days.',timer:0},
+    ]
+  },
+  {
+    id:'r11', name:'Lox English Muffin', category:'breakfast', cuisine:'American',
+    time:5, impressive:true, forageable:false,
+    desc:'The 5-minute impressive breakfast. Toasted English muffin, cream cheese, lox, the works.',
+    tags:['pescatarian','breakfast','quick','impressive','no-cook'],
+    ingredients:[
+      {name:'English muffins or sourdough',amt:2,unit:'muffins',section:'pantry',pantry:false},
+      {name:'cream cheese',amt:3,unit:'tbsp',section:'dairy',pantry:false},
+      {name:'lox or smoked salmon',amt:60,unit:'g',section:'protein',pantry:false},
+      {name:'capers',amt:1,unit:'tbsp',section:'pantry',pantry:false},
+      {name:'red onion, very thinly sliced',amt:'few rings',unit:'',section:'produce',pantry:false},
+      {name:'fresh dill',amt:'few sprigs',unit:'',section:'produce',pantry:false},
+      {name:'lemon',amt:'½',unit:'whole',section:'produce',pantry:false},
+      {name:'everything bagel seasoning (optional)',amt:'',unit:'pinch',section:'pantry',pantry:true},
+    ],
+    steps:[
+      {text:'<action>Toast</action> the English muffins until golden and crisp.',timer:0,tip:'The contrast between crisp toast and silky cream cheese is the whole experience.'},
+      {text:'<action>Spread</action> <amt>3 tbsp cream cheese</amt> generously on both halves.',timer:0},
+      {text:'<action>Layer</action> <amt>60g lox</amt> over the cream cheese.',timer:0},
+      {text:'<action>Top</action> with a few rings of red onion, <amt>1 tbsp capers</amt>, and fresh dill sprigs.',timer:0},
+      {text:'<action>Squeeze</action> <amt>½ lemon</amt> over everything. Add a pinch of everything bagel seasoning if using.',timer:0},
+      {text:'<action>Eat</action> immediately.',timer:0,tip:'This also works with sliced cucumber underneath the lox for extra freshness.'},
+    ]
+  },
+  {
+    id:'r12', name:'White Fish with Salsa Verde', category:'weekend', cuisine:'Mediterranean',
+    time:25, impressive:true, forageable:false,
+    desc:'Pan-seared white fish with a bright herby salsa verde. Elegant and easy. Great date night dish.',
+    tags:['pescatarian','fish','impressive'],
+    ingredients:[
+      {name:'white fish fillets (halibut, cod, or mahi)',amt:2,unit:'6oz pieces',section:'protein',pantry:false},
+      {name:'fresh parsley',amt:1,unit:'large bunch',section:'produce',pantry:false},
+      {name:'fresh mint',amt:'½',unit:'bunch',section:'produce',pantry:false},
+      {name:'capers',amt:2,unit:'tbsp',section:'pantry',pantry:false},
+      {name:'garlic clove',amt:1,unit:'clove',section:'produce',pantry:true},
+      {name:'anchovy fillets (optional, but excellent)',amt:2,unit:'fillets',section:'pantry',pantry:false},
+      {name:'olive oil, good quality',amt:'½',unit:'cup',section:'pantry',pantry:true},
+      {name:'lemon',amt:1,unit:'whole',section:'produce',pantry:false},
+      {name:'olive oil for searing',amt:2,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'salt and pepper',amt:'',unit:'',section:'pantry',pantry:true},
+    ],
+    steps:[
+      {text:'<action>Make salsa verde first</action>: Finely chop a large bunch of parsley, ½ bunch of mint, <amt>2 tbsp capers</amt>. If using anchovies, mince them finely.',timer:0,tip:'You can rough-chop then use a blender if you want it smoother.'},
+      {text:'<action>Combine</action> the herbs and capers in a bowl. <action>Add</action> juice of <amt>½ lemon</amt>, <amt>½ cup olive oil</amt>, and minced garlic. <action>Stir</action>. Taste and season.',timer:0,tip:'This should be bright, herby, and slightly acidic. It keeps in the fridge for 3 days.'},
+      {text:'<action>Pat</action> the fish fillets completely dry. <action>Season</action> generously on both sides with salt and pepper.',timer:0},
+      {text:'<action>Heat</action> <amt>2 tbsp olive oil</amt> in a cast iron or stainless pan over high heat until shimmering.',timer:0},
+      {text:'<action>Place</action> fish in the pan. <action>Press</action> lightly for 5 seconds to ensure full contact. Do not move.',timer:0},
+      {text:'<action>Cook</action> for 3–4 minutes until you can see the flesh turning opaque halfway up the side.',timer:240,tip:'The fish will release from the pan when it's ready to flip. If it sticks, wait.'},
+      {text:'<action>Flip</action> once. <action>Cook</action> 2–3 more minutes. The fish is done when it flakes easily.',timer:150},
+      {text:'<action>Plate</action> the fish. <action>Spoon</action> salsa verde generously over the top. Serve with lemon wedge.',timer:0},
+    ]
+  },
+  {
+    id:'r13', name:'Home Fries & Eggs', category:'breakfast', cuisine:'American',
+    time:25, impressive:false, forageable:true,
+    desc:'Crispy cast iron home fries with whatever eggs you want on top. Saturday morning staple.',
+    tags:['vegetarian','breakfast','mushroom'],
+    ingredients:[
+      {name:'yellow potatoes, diced ½ inch',amt:3,unit:'medium',section:'produce',pantry:false},
+      {name:'yellow onion, diced',amt:'½',unit:'medium',section:'produce',pantry:false},
+      {name:'bell pepper, diced',amt:'½',unit:'pepper',section:'produce',pantry:false},
+      {name:'mushrooms, sliced (optional)',amt:1,unit:'cup',section:'produce',pantry:false,forage:'Any wild mushroom works beautifully here — add after the potatoes are half done.'},
+      {name:'eggs',amt:2,unit:'large',section:'dairy',pantry:false},
+      {name:'butter',amt:1,unit:'tbsp',section:'dairy',pantry:true},
+      {name:'olive oil',amt:2,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'smoked paprika',amt:'½',unit:'tsp',section:'pantry',pantry:true},
+      {name:'garlic powder',amt:'¼',unit:'tsp',section:'pantry',pantry:true},
+      {name:'salt and pepper',amt:'',unit:'to taste',section:'pantry',pantry:true},
+      {name:'fresh chives or green onions',amt:'',unit:'for topping',section:'produce',pantry:false},
+    ],
+    steps:[
+      {text:'<action>Dice</action> the potatoes into ½ inch cubes. <action>Toss</action> with <amt>½ tsp smoked paprika</amt>, <amt>¼ tsp garlic powder</amt>, salt, and pepper.',timer:0},
+      {text:'<action>Heat</action> <amt>2 tbsp olive oil</amt> in a cast iron skillet over medium-high.',timer:0},
+      {text:'<action>Add</action> the potatoes in a single layer. <action>Press down</action> slightly. Do not stir for 5 minutes.',timer:300,tip:'The contact with the hot pan is what makes them crispy. Stirring too early ruins it.'},
+      {text:'<action>Flip</action> the potatoes. <action>Add</action> the diced onion and bell pepper. <action>Cook</action> for another 5 minutes.',timer:300,forage:'Add mushrooms now if using.'},
+      {text:'<action>Stir</action> occasionally until potatoes are golden and cooked through — another 5 minutes.',timer:300,tip:'Taste a potato. It should be crispy outside and fluffy inside.'},
+      {text:'In a separate small pan, <action>melt</action> <amt>1 tbsp butter</amt> over medium. <action>Cook</action> eggs however you like them.',timer:0},
+      {text:'<action>Plate</action> the home fries, top with eggs and fresh chives.',timer:0},
+    ]
+  },
+  {
+    id:'r14', name:'Spicy Tuna Rice Bowl', category:'weeknight', cuisine:'Japanese',
+    time:15, impressive:false, forageable:false,
+    desc:'Canned tuna elevated with Japanese flavors. The lazy weeknight meal that actually tastes good.',
+    tags:['pescatarian','quick','no-cook'],
+    ingredients:[
+      {name:'canned tuna in olive oil',amt:2,unit:'5oz cans',section:'pantry',pantry:true},
+      {name:'cooked rice',amt:2,unit:'cups',section:'pantry',pantry:true},
+      {name:'Japanese mayo (or regular mayo + splash of rice vinegar)',amt:3,unit:'tbsp',section:'pantry',pantry:false},
+      {name:'sriracha or chili sauce',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'soy sauce',amt:1,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'sesame oil',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'cucumber, thinly sliced',amt:'½',unit:'whole',section:'produce',pantry:false},
+      {name:'avocado (optional)',amt:'½',unit:'whole',section:'produce',pantry:false},
+      {name:'nori sheets, torn',amt:2,unit:'sheets',section:'pantry',pantry:false},
+      {name:'sesame seeds',amt:1,unit:'tsp',section:'pantry',pantry:true},
+      {name:'green onions',amt:2,unit:'stalks',section:'produce',pantry:false},
+    ],
+    steps:[
+      {text:'<action>Drain</action> the tuna. <action>Mix</action> with <amt>3 tbsp Japanese mayo</amt>, <amt>1 tsp sriracha</amt>, <amt>1 tbsp soy sauce</amt>, and <amt>1 tsp sesame oil</amt>.',timer:0,tip:'Japanese mayo (Kewpie) is richer and more savory than American mayo. Worth having in your pantry.'},
+      {text:'<action>Warm</action> the rice or use it at room temperature.',timer:0},
+      {text:'<action>Build</action> the bowl: rice first, then spicy tuna mix on top.',timer:0},
+      {text:'<action>Arrange</action> sliced cucumber and avocado alongside.',timer:0},
+      {text:'<action>Top</action> with torn nori, sesame seeds, and sliced green onions.',timer:0},
+      {text:'<action>Drizzle</action> a little extra soy sauce and sesame oil over everything.',timer:0},
+    ]
+  },
+  {
+    id:'r15', name:'Mushroom Breakfast Burrito', category:'breakfast', cuisine:'Mexican',
+    time:18, impressive:false, forageable:true,
+    desc:'Scrambled eggs, sautéed mushrooms, cheese, salsa, in a warm tortilla. Fast and filling.',
+    tags:['vegetarian','breakfast','mushroom','quick'],
+    ingredients:[
+      {name:'large flour tortillas',amt:2,unit:'large',section:'pantry',pantry:true},
+      {name:'eggs',amt:4,unit:'large',section:'dairy',pantry:false},
+      {name:'mushrooms, sliced',amt:1.5,unit:'cups',section:'produce',pantry:false,forage:'Foraged mushrooms make this genuinely special.'},
+      {name:'cheddar cheese, grated',amt:'⅓',unit:'cup',section:'dairy',pantry:false},
+      {name:'salsa',amt:'¼',unit:'cup',section:'pantry',pantry:true},
+      {name:'butter',amt:1,unit:'tbsp',section:'dairy',pantry:true},
+      {name:'olive oil',amt:1,unit:'tbsp',section:'pantry',pantry:true},
+      {name:'salt and pepper',amt:'',unit:'',section:'pantry',pantry:true},
+      {name:'sour cream (optional)',amt:2,unit:'tbsp',section:'dairy',pantry:false},
+      {name:'hot sauce',amt:'',unit:'to taste',section:'pantry',pantry:true},
+    ],
+    steps:[
+      {text:'<action>Heat</action> <amt>1 tbsp olive oil</amt> in a pan over medium-high. <action>Add</action> <amt>1½ cups sliced mushrooms</amt>. <action>Cook</action> undisturbed for 2 minutes.',timer:120,forage:'Wild mushrooms: cook 3–4 minutes.'},
+      {text:'<action>Stir</action> the mushrooms and cook 1 more minute. Season with salt. Push to the side.',timer:60},
+      {text:'<action>Reduce</action> heat to medium-low. <action>Add</action> <amt>1 tbsp butter</amt> to the empty side of the pan.',timer:0},
+      {text:'<action>Beat</action> <amt>4 eggs</amt> with a pinch of salt. <action>Pour</action> into the buttered side.',timer:0},
+      {text:'<action>Scramble</action> slowly with a spatula, folding gently. Remove from heat when still slightly wet.',timer:0,tip:'Eggs continue cooking off heat. Pull them early.'},
+      {text:'<action>Warm</action> the tortillas in a dry pan for 20 seconds per side.',timer:0},
+      {text:'<action>Build</action> the burrito: eggs and mushrooms down the center, top with cheese, salsa, and sour cream.',timer:0},
+      {text:'<action>Fold</action> the sides in first, then roll from the bottom up. <action>Eat</action> immediately.',timer:0},
+    ]
+  },
+];
+
+// ─── PANTRY ITEMS ────────────────────────────────────────────────────────────
+const PANTRY_SECTIONS = {
+  'Oils, acids & condiments': ['olive oil','sesame oil','fish sauce','soy sauce','oyster sauce','rice vinegar','mirin','sake'],
+  'Canned & dry goods': ['canned crushed tomatoes','canned chickpeas','canned tuna','pasta','rice','quinoa','farro'],
+  'Spices': ['smoked paprika','cumin','turmeric','garam masala','chili flakes','garlic powder','oregano','cinnamon','za'atar','cayenne','black pepper','salt'],
+  'Condiments & misc': ['Japanese mayo','sriracha','tahini','maple syrup','miso paste','capers'],
+  'Alliums (keep stocked)': ['garlic','yellow onion','red onion'],
+  'Dairy staples': ['butter','eggs','cream cheese'],
+  'Garden (check first)': ['tomatoes','salad greens','fresh herbs'],
+};
+
+const SHOP_SECTIONS = ['Produce & Garden','Protein & Fish','Dairy & Eggs','Pantry & Dry Goods','Spice Restock'];
+
+const SPICE_KIT = [
+  'Smoked paprika','Cumin (ground)','Turmeric','Garam masala','Za'atar',
+  'Sumac','Chipotle powder','Ancho chili powder','Dried oregano',
+  'Cardamom (ground)','Togarashi','Coriander (ground)','Dried lemongrass',
+  'Everything bagel seasoning','Sesame seeds','Chili flakes'
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let pantryState = JSON.parse(localStorage.getItem('k50-pantry') || '{}');
+let shoppingList = JSON.parse(localStorage.getItem('k50-shopping') || '[]');
+let activeRecipe = null;
+let activeStep = 0;
+let servings = 1;
+let timerInterval = null;
+let timerRemaining = 0;
+let filterCat = 'all';
+let speaking = false;
+let metricMode = false;
+
+function saveState(){
+  localStorage.setItem('k50-pantry', JSON.stringify(pantryState));
+  localStorage.setItem('k50-shopping', JSON.stringify(shoppingList));
+}
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function showTab(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>{ if(t.textContent.toLowerCase()===name) t.classList.add('active'); });
+  if(name==='recipes') renderRecipes();
+  if(name==='cook') renderCook();
+  if(name==='pantry') renderPantry();
+  if(name==='shop') renderShop();
+}
+
+// ─── UNIT CONVERSION ─────────────────────────────────────────────────────────
+function convertAmt(amt, unit){
+  if(!metricMode) return {amt, unit};
+  const convMap = {
+    'tbsp': {factor:14.79, toUnit:'ml'}, 'tsp': {factor:4.93, toUnit:'ml'},
+    'cup': {factor:236.6, toUnit:'ml'}, 'oz': {factor:28.35, toUnit:'g'},
+    'lb': {factor:453.6, toUnit:'g'}, 'fl_oz': {factor:29.57, toUnit:'ml'},
+  };
+  const c = convMap[unit];
+  if(c && !isNaN(parseFloat(amt))){
+    return {amt: Math.round(parseFloat(amt)*c.factor), unit: c.toUnit};
+  }
+  return {amt, unit};
+}
+
+function fmtAmt(amt, unit){
+  const c = convertAmt(amt, unit);
+  return c.unit ? `${c.amt} ${c.unit}` : `${c.amt}`;
+}
+
+// ─── RECIPES TAB ─────────────────────────────────────────────────────────────
+function renderRecipes(){
+  const cats = [
+    {key:'all',label:'All'},
+    {key:'breakfast',label:'Breakfast'},
+    {key:'weeknight',label:'Weeknight'},
+    {key:'impressive',label:'Impressive'},
+    {key:'weekend',label:'Weekend'},
+    {key:'mushroom',label:'🍄 Mushroom'},
+    {key:'quick',label:'Under 20 min'},
+  ];
+  let html = '<div class="filter-row">';
+  cats.forEach(c=>{
+    html += `<button class="filter-btn${filterCat===c.key?' active':''}" onclick="setFilter('${c.key}')">${c.label}</button>`;
+  });
+  html += '</div><div class="recipe-grid">';
+  const filtered = RECIPES.filter(r=>{
+    if(filterCat==='all') return true;
+    if(filterCat==='mushroom') return r.forageable || r.tags.includes('mushroom');
+    if(filterCat==='quick') return r.time<=20;
+    if(filterCat==='breakfast') return r.category==='breakfast';
+    if(filterCat==='impressive') return r.impressive;
+    if(filterCat==='weeknight') return r.category==='weeknight';
+    if(filterCat==='weekend') return r.category==='weekend';
+    return true;
+  });
+  filtered.forEach(r=>{
+    const availInfo = getAvailability(r);
+    html += `<div class="recipe-card" onclick="startCook('${r.id}')">
+      <div class="recipe-card-top">
+        <div>
+          <div class="recipe-name">${r.name}${r.impressive?'<span class="badge-impressive">✦ Impressive</span>':''}</div>
+          <div class="recipe-meta">
+            <span class="tag tag-time">⏱ ${r.time} min</span>
+            <span class="tag tag-cuisine">${r.cuisine}</span>
+            ${r.forageable?'<span class="tag tag-forage">🌿 Forageable</span>':''}
+            ${r.tags.includes('vegetarian')?'<span class="tag tag-veg">🌱 Veggie</span>':''}
+            ${r.tags.includes('pescatarian')&&!r.tags.includes('vegetarian')?'<span class="tag tag-fish">🐟 Fish</span>':''}
+          </div>
+        </div>
+      </div>
+      <div class="recipe-desc">${r.desc}</div>
+      <div style="margin-top:8px;font-size:12px;color:${availInfo.color};font-weight:bold">${availInfo.label}</div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('panel-recipes').innerHTML = html;
+}
+
+function setFilter(cat){ filterCat=cat; renderRecipes(); }
+
+function getAvailability(recipe){
+  const ings = recipe.ingredients.filter(i=>!i.pantry);
+  const have = ings.filter(i=>pantryState[i.name]);
+  const missing = ings.length - have.length;
+  if(missing===0) return {color:'#16a34a',label:'✓ You can make this now'};
+  if(missing<=2) return {color:'#ea580c',label:`Almost there — ${missing} item${missing>1?'s':''} needed`};
+  return {color:'#a3a3a3',label:`${missing} items needed`};
+}
+
+// ─── COOK TAB ────────────────────────────────────────────────────────────────
+function startCook(id){
+  activeRecipe = RECIPES.find(r=>r.id===id);
+  activeStep = 0;
+  servings = 1;
+  showTab('cook');
+}
+
+function renderCook(){
+  if(!activeRecipe){
+    document.getElementById('panel-cook').innerHTML = `
+      <div class="empty-state">
+        Tap a recipe in the <strong>Recipes</strong> tab<br>to start cooking.
+      </div>`;
+    return;
+  }
+  const r = activeRecipe;
+  const step = r.steps[activeStep];
+  const totalSteps = r.steps.length;
+  // Build ingredients grouped by section
+  const sections = {};
+  r.ingredients.forEach(i=>{
+    const sec = i.section==='garden'?'Garden (check first)':i.section==='protein'?'Protein & Fish':i.section==='dairy'?'Dairy & Eggs':i.section==='produce'?'Produce':i.section==='pantry'?'Pantry Staples':'Other';
+    if(!sections[sec]) sections[sec]=[];
+    sections[sec].push(i);
+  });
+  let ingHtml = '<div class="ingredients-list"><strong style="font-size:13px">Ingredients</strong>';
+  Object.entries(sections).forEach(([sec,items])=>{
+    ingHtml += `<div class="ing-section-title">${sec}</div>`;
+    items.forEach(i=>{
+      const a = i.amt ? fmtAmt(i.amt*servings, i.unit) : '';
+      ingHtml += `<div class="ing-row"><span class="ing-amt">${a}</span><span class="ing-name">${i.name}${i.section==='garden'?'<span class="ing-garden">garden</span>':''}</span>${i.forage?'<span class="tag tag-forage" style="font-size:10px">🌿</span>':''}</div>`;
+    });
+  });
+  ingHtml += `<button class="unit-toggle" onclick="toggleMetric()" style="margin-top:10px">${metricMode?'Switch to US':'Switch to metric'}</button></div>`;
+  // Format step text
+  let stepText = step.text.replace(/<amt>(.*?)<\/amt>/g,'<span class="amt">$1</span>').replace(/<action>(.*?)<\/action>/g,'<span class="action">$1</span>');
+  let html = `
+    <div class="cook-header">
+      <div class="cook-title">${r.name}</div>
+      <div class="cook-meta">
+        <span>⏱ ${r.time} min total</span>
+        <span>${r.cuisine}</span>
+        ${r.impressive?'<span style="color:#7e22ce">✦ Impressive</span>':''}
+      </div>
+      <div class="servings-ctrl">
+        <span style="font-size:13px;color:#737373">Servings:</span>
+        <button class="sv-btn" onclick="changeServings(-1)">−</button>
+        <span class="sv-num">${servings}</span>
+        <button class="sv-btn" onclick="changeServings(1)">+</button>
+      </div>
+    </div>
+    ${ingHtml}
+    <div style="font-size:12px;font-weight:bold;color:#a3a3a3;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">Step ${activeStep+1} of ${totalSteps}</div>
+    <div style="height:4px;background:#f0f0ef;border-radius:999px;margin-bottom:14px;overflow:hidden">
+      <div style="width:${Math.round((activeStep/Math.max(totalSteps-1,1))*100)}%;height:100%;background:#1a1a1a;border-radius:999px;transition:width 0.3s"></div>
+    </div>`;
+  // All steps, highlight active
+  r.steps.forEach((s,i)=>{
+    const isActive = i===activeStep;
+    let st = s.text.replace(/<amt>(.*?)<\/amt>/g,'<span class="amt">$1</span>').replace(/<action>(.*?)<\/action>/g,'<span class="action">$1</span>');
+    html += `<div class="step-block${isActive?' active-step':''}" id="step-${i}">
+      <div class="step-num">Step ${i+1}</div>
+      <div class="step-text">${st}</div>
+      ${s.timer>0?`<div class="step-timer" onclick="startTimer(${s.timer})">⏱ Set ${Math.floor(s.timer/60)}:${String(s.timer%60).padStart(2,'0')} timer</div>`:''}
+      ${s.forage?`<div class="forage-note"><span>🌿</span><span>${s.forage}</span></div>`:''}
+      ${s.tip?`<div class="step-tip">💡 ${s.tip}</div>`:''}
+    </div>`;
+  });
+  html += `<div class="cook-nav">
+    <button class="cook-btn" onclick="prevStep()" ${activeStep===0?'disabled':''}>← Back</button>
+    <button class="speak-btn${speaking?' speaking':''}" id="speak-btn" onclick="toggleSpeak()">🔊 Read</button>
+    <button class="cook-btn primary" onclick="nextStep()" ${activeStep===totalSteps-1?'disabled':''}>Next →</button>
+  </div>`;
+  document.getElementById('panel-cook').innerHTML = html;
+  document.getElementById(`step-${activeStep}`)?.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function changeServings(d){ servings=Math.max(1,Math.min(8,servings+d)); renderCook(); }
+function toggleMetric(){ metricMode=!metricMode; renderCook(); }
+
+function prevStep(){
+  if(activeStep>0){ stopSpeak(); activeStep--; renderCook(); }
+}
+function nextStep(){
+  if(activeStep<activeRecipe.steps.length-1){ stopSpeak(); activeStep++; renderCook(); }
+}
+
+// ─── READ ALOUD ───────────────────────────────────────────────────────────────
+function getStepText(step){
+  return step.text.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+}
+
+function toggleSpeak(){
+  if(speaking){ stopSpeak(); return; }
+  speaking=true;
+  const step = activeRecipe.steps[activeStep];
+  let text = getStepText(step);
+  if(step.tip) text += '. Tip: ' + step.tip;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 0.88;
+  utter.pitch = 1;
+  utter.onend = ()=>{ speaking=false; const btn=document.getElementById('speak-btn'); if(btn) btn.classList.remove('speaking'); };
+  speechSynthesis.speak(utter);
+  const btn=document.getElementById('speak-btn');
+  if(btn) btn.classList.add('speaking');
+}
+function stopSpeak(){
+  speaking=false;
+  speechSynthesis.cancel();
+}
+
+// ─── TIMER ────────────────────────────────────────────────────────────────────
+function startTimer(seconds){
+  if(timerInterval) clearInterval(timerInterval);
+  timerRemaining=seconds;
+  const overlay=document.getElementById('timer-overlay');
+  overlay.style.display='flex';
+  updateTimerDisplay();
+  timerInterval=setInterval(()=>{
+    timerRemaining--;
+    updateTimerDisplay();
+    if(timerRemaining<=0){
+      clearInterval(timerInterval);
+      overlay.style.display='none';
+      const utter=new SpeechSynthesisUtterance('Timer done.');
+      speechSynthesis.speak(utter);
+    }
+  },1000);
+}
+function updateTimerDisplay(){
+  const m=Math.floor(timerRemaining/60);
+  const s=String(timerRemaining%60).padStart(2,'0');
+  document.getElementById('timer-display').textContent=`${m}:${s}`;
+}
+function cancelTimer(){
+  clearInterval(timerInterval);
+  document.getElementById('timer-overlay').style.display='none';
+}
+
+// ─── PANTRY TAB ───────────────────────────────────────────────────────────────
+function renderPantry(){
+  // Available recipes
+  const canMake=[], almostThere=[];
+  RECIPES.forEach(r=>{
+    const nonPantry=r.ingredients.filter(i=>!i.pantry);
+    const missing=nonPantry.filter(i=>!pantryState[i.name]);
+    if(missing.length===0) canMake.push({r,missing:[]});
+    else if(missing.length<=2) almostThere.push({r,missing});
+  });
+  let html='';
+  // Can make now
+  html+=`<div class="section-header"><div class="section-dot" style="background:#16a34a"></div>Make right now (${canMake.length})</div>`;
+  if(canMake.length===0){
+    html+='<div style="font-size:13px;color:#a3a3a3;margin-bottom:16px;line-height:1.8">Stock up on some ingredients and recipes will appear here.</div>';
+  } else {
+    canMake.forEach(({r})=>{
+      html+=`<div class="available-card" onclick="startCook('${r.id}')">
+        <div class="available-name">${r.name}</div>
+        <div class="available-have" style="color:#16a34a">✓ You have everything · ${r.time} min</div>
+      </div>`;
+    });
+  }
+  // Almost there
+  html+=`<div class="section-header" style="margin-top:16px"><div class="section-dot" style="background:#ea580c"></div>Almost there — grab 1–2 items (${almostThere.length})</div>`;
+  almostThere.forEach(({r,missing})=>{
+    html+=`<div class="available-card" onclick="startCook('${r.id}')">
+      <div class="available-name">${r.name}</div>
+      <div class="available-missing">Need: ${missing.map(i=>i.name).join(', ')}</div>
+      <div style="font-size:11px;color:#a3a3a3;margin-top:2px">${r.time} min · <span style="cursor:pointer;color:#2563eb;text-decoration:underline" onclick="event.stopPropagation();addMissingToShop('${r.id}')">Add missing to shopping list</span></div>
+    </div>`;
+  });
+  // Pantry tracker
+  html+=`<div style="margin-top:20px;padding-top:16px;border-top:1px solid #f0f0ef">
+    <div class="section-header" style="margin-top:0">What you have on hand</div>
+    <div style="font-size:12px;color:#a3a3a3;margin-bottom:12px">Tap items to mark as in stock. This updates your available recipes.</div>`;
+  Object.entries(PANTRY_SECTIONS).forEach(([sec,items])=>{
+    html+=`<div class="pantry-section"><div class="pantry-section-title">${sec}</div><div class="pantry-grid">`;
+    items.forEach(item=>{
+      const have=pantryState[item];
+      html+=`<div class="pantry-item${have?' have':''}" onclick="togglePantry('${item}')">
+        <div class="pantry-check">${have?'✓':''}</div>
+        <span>${item}</span>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  html+='</div>';
+  document.getElementById('panel-pantry').innerHTML=html;
+}
+
+function togglePantry(item){
+  pantryState[item]=!pantryState[item];
+  saveState();
+  renderPantry();
+}
+
+function addMissingToShop(recipeId){
+  const r=RECIPES.find(x=>x.id===recipeId);
+  if(!r) return;
+  const missing=r.ingredients.filter(i=>!i.pantry&&!pantryState[i.name]);
+  missing.forEach(i=>{
+    if(!shoppingList.find(s=>s.name===i.name)){
+      shoppingList.push({
+        name:i.name,
+        section:i.section==='garden'?'Produce & Garden':i.section==='protein'?'Protein & Fish':i.section==='dairy'?'Dairy & Eggs':'Pantry & Dry Goods',
+        checked:false,
+        custom:false
+      });
+    }
+  });
+  saveState();
+  renderPantry();
+}
+
+// ─── SHOPPING TAB ─────────────────────────────────────────────────────────────
+function renderShop(){
+  const grouped={};
+  SHOP_SECTIONS.forEach(s=>{grouped[s]=[];});
+  shoppingList.forEach(item=>{
+    const sec=item.section||'Pantry & Dry Goods';
+    if(!grouped[sec]) grouped[sec]=[];
+    grouped[sec].push(item);
+  });
+  let html='';
+  // Garden note
+  html+=`<div class="garden-note">🌱 Check your garden first: tomatoes, salad greens, fresh herbs may be ready to harvest.</div>`;
+  // Add item row
+  html+=`<div class="shop-add-row">
+    <input id="shop-new-item" class="shop-input" type="text" placeholder="Add item..." onkeypress="if(event.key==='Enter')addShopItem()"/>
+    <select id="shop-new-section" class="shop-input" style="flex:0;width:auto;font-size:12px">
+      ${SHOP_SECTIONS.map(s=>`<option value="${s}">${s.split(' ')[0]}</option>`).join('')}
+    </select>
+    <button class="shop-add-btn" onclick="addShopItem()">Add</button>
+  </div>`;
+  // Spice kit section
+  const spiceItems = shoppingList.filter(i=>i.section==='Spice Restock');
+  if(spiceItems.length>0||true){
+    html+=`<div class="spice-kit">
+      <div class="spice-kit-title">One-time pantry spice setup</div>
+      <div style="font-size:12px;color:#92400e;line-height:1.9">${SPICE_KIT.map(s=>{
+        const inList=shoppingList.find(i=>i.name===s&&i.section==='Spice Restock');
+        return `<span style="cursor:pointer;text-decoration:${inList?'line-through':''};opacity:${inList?0.5:1}" onclick="toggleSpiceKit('${s}')">${s}</span>`;
+      }).join(' · ')}</div>
+      <div style="font-size:11px;color:#a16207;margin-top:6px">Tap to add to shopping list</div>
+    </div>`;
+  }
+  // Sections
+  SHOP_SECTIONS.forEach(sec=>{
+    const items=grouped[sec]||[];
+    if(items.length===0) return;
+    html+=`<div class="shop-section">
+      <div class="shop-section-title">
+        ${sec==='Produce & Garden'?'🥬':sec==='Protein & Fish'?'🐟':sec==='Dairy & Eggs'?'🥚':sec==='Spice Restock'?'🌶️':'🥫'} ${sec}
+      </div>`;
+    items.forEach((item,idx)=>{
+      const realIdx=shoppingList.indexOf(item);
+      html+=`<div class="shop-item${item.checked?' checked':''}" onclick="toggleShopItem(${realIdx})">
+        <div class="shop-check">${item.checked?'✓':''}</div>
+        <div>
+          <div class="shop-item-name">${item.name}</div>
+        </div>
+        <button onclick="event.stopPropagation();removeShopItem(${realIdx})" style="background:none;border:none;color:#d4d4d2;cursor:pointer;font-size:16px;padding:0 4px">×</button>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  // Clear checked button
+  const checkedCount=shoppingList.filter(i=>i.checked).length;
+  if(checkedCount>0){
+    html+=`<div style="text-align:center;padding:10px 0">
+      <button class="shop-clear-btn" onclick="clearChecked()">Clear ${checkedCount} checked item${checkedCount>1?'s':''}</button>
+    </div>`;
+  }
+  document.getElementById('panel-shop').innerHTML=html;
+}
+
+function addShopItem(){
+  const input=document.getElementById('shop-new-item');
+  const section=document.getElementById('shop-new-section')?.value||'Pantry & Dry Goods';
+  const name=input?.value?.trim();
+  if(!name) return;
+  shoppingList.push({name,section,checked:false,custom:true});
+  if(input) input.value='';
+  saveState();
+  renderShop();
+}
+
+function toggleShopItem(idx){
+  shoppingList[idx].checked=!shoppingList[idx].checked;
+  saveState();
+  renderShop();
+}
+
+function removeShopItem(idx){
+  shoppingList.splice(idx,1);
+  saveState();
+  renderShop();
+}
+
+function clearChecked(){
+  shoppingList=shoppingList.filter(i=>!i.checked);
+  saveState();
+  renderShop();
+}
+
+function toggleSpiceKit(spice){
+  const existing=shoppingList.find(i=>i.name===spice&&i.section==='Spice Restock');
+  if(existing){ shoppingList=shoppingList.filter(i=>!(i.name===spice&&i.section==='Spice Restock')); }
+  else { shoppingList.push({name:spice,section:'Spice Restock',checked:false,custom:false}); }
+  saveState();
+  renderShop();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderRecipes();
+</script>
+</body>
+</html>

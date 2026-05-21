@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultra 50 Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f4;color:#1a1a1a;font-size:14px}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid #e5e5e3;border-radius:12px;overflow:hidden;margin-bottom:16px}
+.header{padding:14px 16px;border-bottom:1px solid #f0f0ef}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.phase-badge{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:600}
+.progress-bar{height:4px;background:#e5e5e3;border-radius:999px;overflow:hidden;margin-bottom:4px}
+.progress-fill{height:100%;background:#fff;border-radius:999px;transition:width 0.3s}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:#737373}
+.nav{padding:8px 16px;background:#fafaf9;border-bottom:1px solid #f0f0ef;display:flex;align-items:center;gap:8px}
+.nav-btn{padding:5px 12px;border:1px solid #e5e5e3;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;color:#1a1a1a}
+.nav-btn:disabled{color:#d4d4d2;cursor:default}
+.nav-center{flex:1;text-align:center;font-size:11px;color:#737373}
+.today-btn{padding:5px 12px;border:1px solid #1a1a1a;border-radius:6px;background:#fff;cursor:pointer;font-size:11px;font-weight:600;color:#1a1a1a}
+.day-hero{padding:14px 16px;border-bottom:1px solid #f0f0ef}
+.day-meta{font-size:11px;color:#737373;margin-bottom:4px}
+.day-title{font-size:16px;font-weight:600;margin-bottom:8px;line-height:1.4}
+.day-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.badges{display:flex;gap:5px;flex-wrap:wrap}
+.badge{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:600}
+.badge-secondary{background:#f5f5f3;color:#525252}
+.mark-btn{padding:6px 12px;border:1px solid #e5e5e3;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap;flex-shrink:0;color:#737373}
+.mark-btn.done{border-color:#16a34a;background:#dcfce7;color:#16a34a}
+.section-toggle{width:100%;text-align:left;padding:12px 16px;background:none;border:none;border-bottom:1px solid #f0f0ef;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}
+.section-body{padding:0 16px 14px}
+.ex-header{display:grid;grid-template-columns:1fr 50px 60px;gap:6px;font-size:10px;font-weight:600;color:#a3a3a3;text-transform:uppercase;letter-spacing:0.04em;padding:4px 0;border-bottom:1px solid #f0f0ef;margin-bottom:2px}
+.ex-row{display:grid;grid-template-columns:1fr 50px 60px;gap:6px;padding:5px 0;border-bottom:1px solid #f5f5f3;font-size:13px}
+.ex-row:last-child{border-bottom:none}
+.ex-sets{color:#737373}
+.lift-note{margin-top:10px;padding:8px 10px;background:#fafaf9;border-radius:6px;font-size:12px;color:#737373;line-height:1.6}
+.run-block{padding:12px 16px;background:#fafaf9;border-radius:8px;margin-bottom:4px}
+.run-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.run-title{font-size:14px;font-weight:600}
+.run-miles{font-size:14px;font-weight:600;margin-left:auto}
+.run-desc{font-size:13px;color:#525252;line-height:1.7}
+.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.macro-card{border-radius:8px;padding:8px 4px;text-align:center}
+.macro-val{font-size:15px;font-weight:700}
+.macro-lbl{font-size:10px;color:#737373;margin-top:1px}
+.meal-card{border:1px solid #f0f0ef;border-radius:8px;padding:10px 12px;margin-bottom:6px}
+.meal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.meal-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em}
+.meal-cal{font-size:11px;color:#737373}
+.meal-items{font-size:13px;color:#525252;line-height:1.6}
+.week-strip{padding:12px 16px;border-bottom:1px solid #f0f0ef}
+.week-label{font-size:10px;font-weight:700;color:#a3a3a3;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.week-day{padding:6px 2px;border-radius:6px;cursor:pointer;border:1px solid #e5e5e3;background:#fff;text-align:center}
+.week-day.active{border-width:1.5px}
+.week-day-name{font-size:10px;color:#a3a3a3;margin-bottom:3px}
+.week-dot{width:6px;height:6px;border-radius:50%;margin:0 auto 3px}
+.week-info{font-size:9px;color:#737373}
+.week-jumper{padding:10px 16px;border-top:1px solid #f0f0ef}
+.week-nums{display:flex;gap:3px;flex-wrap:wrap;margin-top:8px}
+.wk-num{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;font-size:11px;border:1px solid #e5e5e3;background:#fafaf9;color:#737373}
+.wk-num.active{background:#fff;color:#fff;border-color:#1a1a1a;font-weight:600}
+.footer{padding:10px 16px;background:#fafaf9;display:flex;gap:8px;justify-content:flex-end}
+.footer-btn{font-size:11px;padding:5px 10px;border:1px solid #e5e5e3;border-radius:6px;background:#fff;cursor:pointer;color:#737373}
+.rest-msg{padding:14px 16px;border-bottom:1px solid #f0f0ef;font-size:13px;color:#737373;line-height:1.7}
+.import-screen{padding:3rem 1rem;text-align:center}
+.import-icon{width:56px;height:56px;border:1px solid #e5e5e3;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;background:#fafaf9;font-size:24px}
+.import-title{font-size:20px;font-weight:700;margin-bottom:8px}
+.import-desc{font-size:14px;color:#737373;max-width:300px;margin:0 auto 1.5rem;line-height:1.7}
+.import-btn{padding:10px 24px;border:1px solid #1a1a1a;border-radius:8px;background:#fff;color:#fff;font-size:14px;font-weight:600;cursor:pointer}
+.import-sub{font-size:12px;color:#a3a3a3;margin-top:10px}
+.view-tabs{display:flex;border-bottom:1px solid #e5e5e3}
+.view-tab{flex:1;padding:9px 6px;border:none;background:#fafaf9;cursor:pointer;font-size:12px;font-weight:600;color:#a3a3a3;border-bottom:2px solid transparent;margin-bottom:-1px}
+.view-tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a;background:#fff}
+.ov-section{padding:14px 16px;border-bottom:1px solid #f0f0ef}
+.ov-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#a3a3a3;margin-bottom:8px}
+.stat-pill{background:#f5f5f3;border-radius:8px;padding:10px 12px;text-align:center}
+.wt-input{width:76px;padding:6px 8px;border:1px solid #e5e5e3;border-radius:6px;font-size:13px;text-align:center;background:#fff;color:#1a1a1a}
+.wt-log-btn{padding:6px 12px;border:1px solid #1a1a1a;border-radius:6px;background:#fff;color:#fff;cursor:pointer;font-size:12px;font-weight:600}
+.ex-link{cursor:pointer;border-bottom:1px dotted #a3a3a3;transition:color 0.15s}
+.ex-link:hover{color:#2563eb;border-bottom-color:#2563eb}
+#ex-modal-inner{background:#fff;border-radius:14px;padding:22px 20px 16px;max-width:240px;width:88%;text-align:center}
+#ex-modal-name{font-size:13px;font-weight:600;margin:10px 0 12px;color:#1a1a1a}
+.ex-close-btn{padding:6px 18px;border:1px solid #e5e5e3;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:#1a1a1a}
+
+#ex-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:999;cursor:pointer}
+
+.track-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.track-btn{padding:5px 11px;border:1px solid #e5e5e3;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:#737373;flex-shrink:0}
+.track-btn.done{border-color:#16a34a;background:#dcfce7;color:#16a34a}
+.track-btn.run-done{border-color:#2563eb;background:#eff6ff;color:#2563eb}
+.meal-track{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.meal-tick{width:22px;height:22px;border:1px solid #e5e5e3;border-radius:5px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.meal-tick.ticked{border-color:#16a34a;background:#dcfce7;color:#16a34a}
+.meal-note-input{flex:1;min-width:120px;padding:5px 8px;border:1px solid #e5e5e3;border-radius:6px;font-size:12px;background:#fff;color:#1a1a1a;font-family:inherit}
+.meal-note-input::placeholder{color:#d4d4d2}
+.meal-note-saved{font-size:11px;color:#16a34a;margin-left:2px}
+
+.log-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.log-field{display:flex;flex-direction:column;gap:3px}
+.log-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#a3a3a3}
+.log-input{padding:6px 8px;border:1px solid #e5e5e3;border-radius:6px;font-size:13px;background:#fff;color:#1a1a1a;font-family:inherit;width:100%}
+.log-input::placeholder{color:#d4d4d2}
+.log-textarea{padding:6px 8px;border:1px solid #e5e5e3;border-radius:6px;font-size:12px;background:#fff;color:#1a1a1a;font-family:inherit;width:100%;resize:vertical;min-height:52px}
+.log-textarea::placeholder{color:#d4d4d2}
+.log-save-btn{padding:5px 14px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;cursor:pointer;font-size:12px;font-weight:600;margin-top:8px}
+.log-saved{font-size:11px;color:#16a34a;margin-left:8px;opacity:0;transition:opacity 0.3s}
+.rpe-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.rpe-btn{width:28px;height:28px;border:1px solid #e5e5e3;border-radius:5px;background:#fff;cursor:pointer;font-size:11px;font-weight:600;color:#737373;display:flex;align-items:center;justify-content:center}
+.rpe-btn.sel{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.daily-log-card{background:#fafaf9;border:1px solid #f0f0ef;border-radius:8px;padding:12px 14px;margin:0 16px 14px}
+.daily-log-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#a3a3a3;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="app"></div>
+</div>
+<script>
+let program = null;
+let completed = JSON.parse(localStorage.getItem('u50-done') || '[]');
+let workouts = JSON.parse(localStorage.getItem('u50-workouts') || '{}');
+let mealLog = JSON.parse(localStorage.getItem('u50-meals') || '{}');
+let runLog = JSON.parse(localStorage.getItem('u50-runlog') || '{}');
+let dailyLog = JSON.parse(localStorage.getItem('u50-daily') || '{}');
+let viewIdx = 0;
+
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const PROG_START = new Date(2026, 3, 15);
+
+const PHASE_COLORS = {
+  'Cut + Base':    {bg:'#fff7ed',color:'#ea580c',label:'Phase 1'},
+  'Aerobic Build': {bg:'#eff6ff',color:'#2563eb',label:'Phase 2'},
+  'Peak':          {bg:'#f0fdf4',color:'#16a34a',label:'Phase 3'},
+  'Taper':         {bg:'#faf5ff',color:'#9333ea',label:'Phase 4'}
+};
+
+function sessionStyle(day) {
+  if (!day.run && !day.lift) return {bg:'#f5f5f4',color:'#737373',label:'Rest'};
+  if (day.lift && day.run)   return {bg:'#f5f3ff',color:'#7c3aed',label:'Lift + run'};
+  if (day.lift)              return {bg:'#eff6ff',color:'#2563eb',label:'Strength'};
+  if (day.run.effort === 'Easy')     return {bg:'#f0fdf4',color:'#16a34a',label:'Easy run'};
+  if (day.run.effort === 'Moderate') return {bg:'#fff7ed',color:'#ea580c',label:'Long run'};
+  return {bg:'#fff1f2',color:'#dc2626',label:'Hard run'};
+}
+
+function effortStyle(e) {
+  if (e === 'Hard')     return {bg:'#fee2e2',color:'#dc2626'};
+  if (e === 'Moderate') return {bg:'#ffedd5',color:'#ea580c'};
+  return {bg:'#dcfce7',color:'#16a34a'};
+}
+
+function getTodayIdx() {
+  const diff = Math.floor((new Date() - PROG_START) / 86400000);
+  return Math.max(0, Math.min(diff, (program||[]).length - 1));
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (!program) { renderImport(app); return; }
+  const day = program[viewIdx];
+  const todayIdx = getTodayIdx();
+  const dk = `${day.week}-${day.day}`;
+  const isDone = completed.includes(dk);
+  const ph = PHASE_COLORS[day.phase] || PHASE_COLORS['Taper'];
+  const ss = sessionStyle(day);
+  const pct = Math.round(completed.length / 1.4);
+  const di = viewIdx;
+  const left = 139 - di;
+  const ws = Math.floor(viewIdx/7)*7;
+  const wDays = program.slice(ws, Math.min(ws+7, program.length));
+  const title = day.lift && !day.run ? day.lift.title.split('—')[0].trim()
+              : day.run && !day.lift ? day.run.type
+              : day.run && day.lift ? day.lift.title.split('—')[0].trim() + ' + ' + day.run.miles + 'mi run'
+              : 'Rest day';
+
+  let exRows = '';
+  if (day.lift) {
+    exRows = day.lift.exercises.map(ex =>
+      `<div class="ex-row"><span class="ex-link" onclick="showExercise('${ex.name}')">${ex.name}</span><span class="ex-sets">${ex.sets}</span><span class="ex-sets">${ex.reps}</span></div>`
+    ).join('');
+  }
+
+  let macroColors = [
+    {l:'Protein',v:day.nutrition.protein_g+'g',bg:'#eff6ff',c:'#2563eb'},
+    {l:'Carbs',v:day.nutrition.carbs_g+'g',bg:'#fff7ed',c:'#ea580c'},
+    {l:'Fat',v:day.nutrition.fat_g+'g',bg:'#f5f5f4',c:'#525252'},
+    {l:'Cal',v:day.nutrition.totalCalories,bg:'#f0fdf4',c:'#16a34a'},
+  ];
+
+  let mealCards = day.nutrition.meals.map((m, mi) => {
+    const mk = dk + '-meal' + mi;
+    const mDone = mealLog[mk]?.done;
+    const mNote = mealLog[mk]?.note || '';
+    return `<div class="meal-card" style="border-color:${mDone?'#16a34a':''}">
+      <div class="meal-header">
+        <span class="meal-name">${m.meal}</span>
+        <span class="meal-cal">${m.calories} cal</span>
+      </div>
+      <div class="meal-items">${m.items}</div>
+      <div class="meal-track">
+        <div class="meal-tick ${mDone?'ticked':''}" onclick="toggleMeal('${mk}')">${mDone?'✓':''}</div>
+        <input id="note-${mk}" class="meal-note-input" type="text" placeholder="What did you actually eat? (optional)" value="${mNote.replace(/"/g,'&quot;')}" onblur="saveMealNote('${mk}')"/>
+        <span id="saved-${mk}" class="meal-note-saved" style="opacity:0;transition:opacity 0.3s">saved</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  let weekDayHtml = wDays.map((d, i) => {
+    const k = `${d.week}-${d.day}`;
+    const done = completed.includes(k);
+    const active = ws + i === viewIdx;
+    const ds = sessionStyle(d);
+    const dotBg = done ? '#16a34a' : ds.color;
+    const info = d.run ? d.run.miles + 'mi' : d.lift ? 'lift' : 'rest';
+    return `<div class="week-day${active?' active':''}" style="${active?'border-color:'+ds.color+';background:'+ds.bg:''}" onclick="jumpTo(${ws+i})">
+      <div class="week-day-name">${d.day.slice(0,3)}</div>
+      <div class="week-dot" style="background:${dotBg};opacity:${done?1:0.3}"></div>
+      <div class="week-info">${info}</div>
+    </div>`;
+  }).join('');
+
+  let wkNums = Array.from({length:20},(_,i)=>i+1).map(w =>
+    `<div class="wk-num${w===day.week?' active':''}" onclick="jumpTo(${(w-1)*7})">${w}</div>`
+  ).join('');
+
+  let workoutSection = '';
+  if (day.lift || day.run) {
+    let liftHtml = '';
+    if (day.lift) {
+      liftHtml = `<button class="section-toggle" onclick="toggleSection('lift')">
+        Workout: ${day.lift.title} <span id="lift-arrow">▲</span>
+      </button>
+      <div id="lift-body" class="section-body">
+        <div class="ex-header"><span>Exercise</span><span>Sets</span><span>Reps</span></div>
+        ${exRows}
+        <div class="lift-note">${day.lift.note}</div>
+      </div>`;
+    }
+    let runHtml = '';
+    if (day.run) {
+      const ef = effortStyle(day.run.effort);
+      runHtml = `<button class="section-toggle" style="border-top:${day.lift?'1px solid #f0f0ef':'none'}" onclick="toggleSection('run')">
+        Run: ${day.run.type} <span id="run-arrow">▲</span>
+      </button>
+      <div id="run-body" class="section-body">
+        <div class="run-block">
+          <div class="run-header">
+            <span class="run-title">${day.run.type}</span>
+            <span style="font-size:11px;padding:2px 8px;border-radius:999px;background:${ef.bg};color:${ef.color};font-weight:600">${day.run.effort}</span>
+            <span class="run-miles">${day.run.miles} mi</span>
+          </div>
+          <div class="run-desc">${day.run.description}</div>
+          <div style="border-top:1px solid #e5e5e3;margin-top:10px;padding-top:10px">
+            <div class="log-grid">
+              <div class="log-field">
+                <span class="log-label">Avg pace (min/mi)</span>
+                <input id="rl-pace-${dk}" class="log-input" type="text" placeholder="e.g. 9:45" value="${runLog[dk]?.pace||''}" />
+              </div>
+              <div class="log-field">
+                <span class="log-label">Perceived effort (RPE)</span>
+                <div class="rpe-row">${Array.from({length:10},(_,i)=>i+1).map(n=>`<div class="rpe-btn ${runLog[dk]?.rpe===n?'sel':''}" onclick="setRPE('${dk}',${n})">${n}</div>`).join('')}</div>
+              </div>
+            </div>
+            <div class="log-field" style="margin-top:8px">
+              <span class="log-label">Run notes</span>
+              <textarea id="rl-note-${dk}" class="log-textarea" placeholder="How did it feel? Any tightness, strong sections, terrain notes...">${runLog[dk]?.note||''}</textarea>
+            </div>
+            <div style="display:flex;align-items:center">
+              <button class="log-save-btn" onclick="saveRunLog('${dk}')">Save run log</button>
+              <span id="rl-saved-${dk}" class="log-saved">✓ saved</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+    workoutSection = `<div style="border-bottom:1px solid #f0f0ef">${liftHtml}${runHtml}</div>`;
+  } else {
+    workoutSection = `<div class="rest-msg">Full rest day. Light walking (20–30 min) welcome. Foam roll, stretch, 8 hours sleep. Recovery is when training adaptation locks in.</div>`;
+  }
+
+  const tabs = `<div class="view-tabs"><button class="view-tab ${currentView==='today'?'active':''}" onclick="setView('today')">Today</button><button class="view-tab ${currentView==='overview'?'active':''}" onclick="setView('overview')">Overview</button></div>`;
+
+  if(currentView === 'overview'){
+    app.innerHTML = `<div class="card">${tabs}${renderOverview()}</div><input type="file" id="file-input" accept=".json" onchange="loadFile(event)" style="display:none">`;
+    return;
+  }
+
+  app.innerHTML = `
+    <div class="card">
+      ${tabs}
+      <div class="header">
+        <div class="header-top">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="phase-badge" style="background:${ph.bg};color:${ph.color}">${ph.label}: ${day.phase}</span>
+            <strong>Week ${day.week} / 20</strong>
+          </div>
+          <span style="font-size:11px;color:#737373">${left > 0 ? left + ' days to race' : 'Race week'}</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="progress-label"><span>${completed.length} / 140 days done</span><span>${pct}%</span></div>
+      </div>
+
+      <div class="nav">
+        <button class="nav-btn" onclick="go(-1)" ${viewIdx===0?'disabled':''}>←</button>
+        <div class="nav-center">Day ${viewIdx+1} of 140</div>
+        <button class="nav-btn" onclick="go(1)" ${viewIdx===program.length-1?'disabled':''}>→</button>
+        ${viewIdx !== todayIdx ? `<button class="today-btn" onclick="jumpTo(${todayIdx})">Today</button>` : ''}
+      </div>
+
+      <div class="day-hero">
+        <div class="day-meta">${day.day} · ${day.date}</div>
+        <div class="day-row">
+          <div>
+            <div class="day-title">${title}</div>
+            <div class="badges">
+              <span class="badge" style="background:${ss.bg};color:${ss.color}">${ss.label}</span>
+              ${day.run ? `<span class="badge badge-secondary">${day.run.miles} mi</span>` : ''}
+              <span class="badge badge-secondary">${day.nutrition.net_carbs_g||day.nutrition.carbs_g||'?'}g carbs</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+            ${day.lift ? `<button class="track-btn ${workouts[dk]?.lift?'done':''}" onclick="toggleWorkout('${dk}','lift')">${workouts[dk]?.lift?'✓ Lifted':'Log lift'}</button>` : ''}
+            ${day.run ? `<button class="track-btn ${workouts[dk]?.run?'run-done':''}" onclick="toggleWorkout('${dk}','run')">${workouts[dk]?.run?'✓ Run done':'Log run'}</button>` : ''}
+            ${!day.lift && !day.run ? `<button class="track-btn ${isDone?'done':''}" onclick="toggleDone('${dk}')">${isDone?'✓ Rested':'Log rest'}</button>` : ''}
+          </div>
+        </div>
+      </div>
+
+      ${workoutSection}
+
+      <div class="daily-log-card">
+        <div class="daily-log-title">Daily vitals</div>
+        <div class="log-grid">
+          <div class="log-field">
+            <span class="log-label">Sleep (hours)</span>
+            <input id="dl-sleep-${dk}" class="log-input" type="number" step="0.5" min="0" max="24" placeholder="e.g. 7.5" value="${dailyLog[dk]?.sleep||''}" />
+          </div>
+          <div class="log-field">
+            <span class="log-label">Resting HR (bpm)</span>
+            <input id="dl-rhr-${dk}" class="log-input" type="number" step="1" min="30" max="120" placeholder="from Apple Watch" value="${dailyLog[dk]?.rhr||''}" />
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;margin-top:8px">
+          <button class="log-save-btn" onclick="saveDailyLog('${dk}')">Save vitals</button>
+          <span id="dl-saved-${dk}" class="log-saved">✓ saved</span>
+        </div>
+      </div>
+
+      <button class="section-toggle" onclick="toggleSection('nutrition')">
+        Nutrition · ${day.nutrition.window||'Open window'} <span id="nutrition-arrow">▲</span>
+      </button>
+      <div id="nutrition-body" class="section-body">
+        <div class="macro-grid">
+          ${macroColors.map(m=>`<div class="macro-card" style="background:${m.bg}"><div class="macro-val" style="color:${m.c}">${m.v}</div><div class="macro-lbl">${m.l}</div></div>`).join('')}
+        </div>
+        ${n.note?`<div style="font-size:13px;background:#fafaf9;border-radius:8px;padding:8px 12px;margin-bottom:10px;color:#525252;line-height:1.7;border-left:3px solid #e5e5e3">${n.note}</div>`:''}
+        ${mealCards}
+      </div>
+
+      <div class="week-strip">
+        <div class="week-label">This week</div>
+        <div class="week-grid">${weekDayHtml}</div>
+      </div>
+
+      <div class="week-jumper">
+        <div class="week-label">Jump to week</div>
+        <div class="week-nums">${wkNums}</div>
+      </div>
+
+      <div class="footer">
+        <a href="kitchen.html" style="font-size:11px;padding:5px 10px;border:1px solid #e5e5e3;border-radius:6px;background:#fff;color:#1a1a1a;text-decoration:none;font-weight:600">🍳 Kitchen</a><button class="footer-btn" onclick="document.getElementById('file-input').click()">Re-import JSON</button>
+        <button class="footer-btn" onclick="clearData()">Clear data</button>
+      </div>
+    </div>
+    <input type="file" id="file-input" accept=".json" onchange="loadFile(event)" style="display:none">
+  `;
+}
+
+function renderImport(app) {
+  app.innerHTML = `
+    <div class="card">
+      <div class="import-screen">
+        <div class="import-icon">↑</div>
+        <div class="import-title">Ultra 50 Dashboard</div>
+        <div class="import-desc">Import your program JSON file to start tracking daily workouts and nutrition.</div>
+        <button class="import-btn" onclick="document.getElementById('file-input').click()">Import program JSON</button>
+        <div class="import-sub">Open ultra_50_program.json</div>
+      </div>
+    </div>
+    <input type="file" id="file-input" accept=".json" onchange="loadFile(event)" style="display:none">
+  `;
+}
+
+function loadFile(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data) || !data[0]?.week) { alert('Invalid program JSON.'); return; }
+      program = data;
+      viewIdx = getTodayIdx();
+      localStorage.setItem('u50-prog', JSON.stringify(data));
+      render();
+    } catch(err) { alert('Could not parse file.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function go(dir) { viewIdx = Math.max(0, Math.min(program.length-1, viewIdx+dir)); render(); }
+function jumpTo(i) { viewIdx = i; render(); }
+
+
+function toggleWorkout(dk, type) {
+  if (!workouts[dk]) workouts[dk] = {};
+  workouts[dk][type] = !workouts[dk][type];
+  localStorage.setItem('u50-workouts', JSON.stringify(workouts));
+  // Auto-mark day done if both applicable workouts are ticked
+  const day = program[viewIdx];
+  const needsLift = !!day.lift;
+  const needsRun = !!day.run;
+  const liftOk = !needsLift || workouts[dk]?.lift;
+  const runOk = !needsRun || workouts[dk]?.run;
+  if (liftOk && runOk && (needsLift || needsRun)) {
+    if (!completed.includes(dk)) { completed.push(dk); localStorage.setItem('u50-done', JSON.stringify(completed)); }
+  } else {
+    completed = completed.filter(k => k !== dk);
+    localStorage.setItem('u50-done', JSON.stringify(completed));
+  }
+  render();
+}
+
+function toggleMeal(mk) {
+  if (!mealLog[mk]) mealLog[mk] = {};
+  mealLog[mk].done = !mealLog[mk].done;
+  localStorage.setItem('u50-meals', JSON.stringify(mealLog));
+  render();
+}
+
+function saveMealNote(mk) {
+  const el = document.getElementById('note-' + mk);
+  if (!el) return;
+  if (!mealLog[mk]) mealLog[mk] = {};
+  mealLog[mk].note = el.value;
+  localStorage.setItem('u50-meals', JSON.stringify(mealLog));
+  const saved = document.getElementById('saved-' + mk);
+  if (saved) { saved.style.opacity=1; setTimeout(()=>saved.style.opacity=0, 1500); }
+}
+
+function saveRunLog(dk) {
+  const pace = document.getElementById('rl-pace-'+dk)?.value || '';
+  const rpe  = runLog[dk]?.rpe || null;
+  const note = document.getElementById('rl-note-'+dk)?.value || '';
+  runLog[dk] = { pace, rpe, note };
+  localStorage.setItem('u50-runlog', JSON.stringify(runLog));
+  const el = document.getElementById('rl-saved-'+dk);
+  if(el){ el.style.opacity=1; setTimeout(()=>el.style.opacity=0,1500); }
+}
+
+function setRPE(dk, val) {
+  if (!runLog[dk]) runLog[dk] = {};
+  runLog[dk].rpe = runLog[dk].rpe === val ? null : val;
+  localStorage.setItem('u50-runlog', JSON.stringify(runLog));
+  render();
+}
+
+function saveDailyLog(dk) {
+  const sleep = document.getElementById('dl-sleep-'+dk)?.value || '';
+  const rhr   = document.getElementById('dl-rhr-'+dk)?.value || '';
+  dailyLog[dk] = { sleep, rhr };
+  localStorage.setItem('u50-daily', JSON.stringify(dailyLog));
+  const el = document.getElementById('dl-saved-'+dk);
+  if(el){ el.style.opacity=1; setTimeout(()=>el.style.opacity=0,1500); }
+}
+
+function toggleDone(dk) {
+  if (completed.includes(dk)) { completed = completed.filter(k => k !== dk); }
+  else { completed.push(dk); }
+  localStorage.setItem('u50-done', JSON.stringify(completed));
+  render();
+}
+
+function clearData() {
+  if (!confirm('Clear all data and progress?')) return;
+  program = null; completed = []; viewIdx = 0;
+  localStorage.removeItem('u50-prog');
+  localStorage.removeItem('u50-done');
+  localStorage.removeItem('u50-workouts');
+  localStorage.removeItem('u50-meals');
+  localStorage.removeItem('u50-runlog');
+  localStorage.removeItem('u50-daily');
+  workouts = {}; mealLog = {}; runLog = {}; dailyLog = {};
+  render();
+}
+
+function toggleSection(id) {
+  const body = document.getElementById(id+'-body');
+  const arrow = document.getElementById(id+'-arrow');
+  if (!body) return;
+  const hidden = body.style.display === 'none';
+  body.style.display = hidden ? '' : 'none';
+  if (arrow) arrow.textContent = hidden ? '▲' : '▼';
+}
+
+var currentView = 'overview';
+var weightLog = JSON.parse(localStorage.getItem('u50-weight') || '[]');
+
+// Load saved program — localStorage first, then fetch program.json
+const saved = localStorage.getItem('u50-prog');
+if (saved) {
+  try { program = JSON.parse(saved); viewIdx = getTodayIdx(); } catch(e) {}
+  render();
+} else {
+  fetch('program.json')
+    .then(r => r.json())
+    .then(data => {
+      program = data;
+      viewIdx = getTodayIdx();
+      localStorage.setItem('u50-prog', JSON.stringify(data));
+      render();
+    })
+    .catch(() => render());
+}
+const EX_SVGS = {"DB bench press": "<rect x=\"8\" y=\"60\" width=\"82\" height=\"8\" rx=\"3\" fill=\"#d4d4d2\" stroke=\"#aaa\" stroke-width=\"1\"/><line x1=\"16\" y1=\"56\" x2=\"72\" y2=\"56\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"79\" cy=\"56\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"36\" y1=\"56\" x2=\"30\" y2=\"34\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"54\" y1=\"56\" x2=\"60\" y2=\"34\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"24\" cy=\"30\" r=\"4\" fill=\"#555\"/><line x1=\"24\" y1=\"30\" x2=\"36\" y2=\"30\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"36\" cy=\"30\" r=\"4\" fill=\"#555\"/><circle cx=\"54\" cy=\"30\" r=\"4\" fill=\"#555\"/><line x1=\"54\" y1=\"30\" x2=\"66\" y2=\"30\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"66\" cy=\"30\" r=\"4\" fill=\"#555\"/>", "Incline DB press": "<rect x=\"10\" y=\"70\" width=\"70\" height=\"8\" rx=\"3\" fill=\"#d4d4d2\" stroke=\"#aaa\" stroke-width=\"1\"/><line x1=\"70\" y1=\"70\" x2=\"88\" y2=\"38\" stroke=\"#aaa\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"56\" y1=\"64\" x2=\"28\" y2=\"50\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"23\" cy=\"46\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"42\" y1=\"56\" x2=\"36\" y2=\"36\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"54\" y1=\"56\" x2=\"62\" y2=\"36\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"30\" r=\"4\" fill=\"#555\"/><line x1=\"30\" y1=\"30\" x2=\"42\" y2=\"30\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"42\" cy=\"30\" r=\"4\" fill=\"#555\"/><circle cx=\"56\" cy=\"30\" r=\"4\" fill=\"#555\"/><line x1=\"56\" y1=\"30\" x2=\"68\" y2=\"30\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"68\" cy=\"30\" r=\"4\" fill=\"#555\"/>", "DB shoulder press": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"22\" y2=\"38\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"78\" y2=\"38\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"22\" y1=\"38\" x2=\"18\" y2=\"20\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"78\" y1=\"38\" x2=\"82\" y2=\"20\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"16\" r=\"4\" fill=\"#555\"/><line x1=\"12\" y1=\"16\" x2=\"24\" y2=\"16\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"24\" cy=\"16\" r=\"4\" fill=\"#555\"/><circle cx=\"76\" cy=\"16\" r=\"4\" fill=\"#555\"/><line x1=\"76\" y1=\"16\" x2=\"88\" y2=\"16\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"88\" cy=\"16\" r=\"4\" fill=\"#555\"/>", "Lateral raises": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"12\" y2=\"28\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"88\" y2=\"28\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"6\" cy=\"24\" r=\"4\" fill=\"#555\"/><line x1=\"6\" y1=\"24\" x2=\"6\" y2=\"32\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"6\" cy=\"32\" r=\"4\" fill=\"#555\"/><circle cx=\"94\" cy=\"24\" r=\"4\" fill=\"#555\"/><line x1=\"94\" y1=\"24\" x2=\"94\" y2=\"32\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"94\" cy=\"32\" r=\"4\" fill=\"#555\"/>", "Overhead tricep extension": "<circle cx=\"52\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"52\" y1=\"19\" x2=\"52\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"52\" y1=\"28\" x2=\"78\" y2=\"42\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"52\" y1=\"28\" x2=\"52\" y2=\"16\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"52\" y1=\"16\" x2=\"44\" y2=\"32\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"40\" cy=\"30\" r=\"4\" fill=\"#555\"/><line x1=\"40\" y1=\"30\" x2=\"44\" y2=\"42\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"44\" cy=\"42\" r=\"4\" fill=\"#555\"/>", "Tricep kickbacks": "<circle cx=\"75\" cy=\"22\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"68\" y1=\"28\" x2=\"32\" y2=\"44\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"32\" y1=\"44\" x2=\"26\" y2=\"70\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"32\" y1=\"44\" x2=\"42\" y2=\"70\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"52\" y1=\"36\" x2=\"44\" y2=\"50\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"44\" y1=\"50\" x2=\"18\" y2=\"46\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"10\" cy=\"42\" r=\"4\" fill=\"#555\"/><line x1=\"10\" y1=\"42\" x2=\"20\" y2=\"42\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"20\" cy=\"42\" r=\"4\" fill=\"#555\"/><line x1=\"52\" y1=\"36\" x2=\"62\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/>", "Bent-over DB row": "<circle cx=\"76\" cy=\"20\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"69\" y1=\"26\" x2=\"33\" y2=\"42\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"33\" y1=\"42\" x2=\"26\" y2=\"68\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"33\" y1=\"42\" x2=\"43\" y2=\"68\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"53\" y1=\"34\" x2=\"48\" y2=\"18\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"42\" cy=\"13\" r=\"4\" fill=\"#555\"/><line x1=\"42\" y1=\"13\" x2=\"54\" y2=\"13\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"54\" cy=\"13\" r=\"4\" fill=\"#555\"/><line x1=\"53\" y1=\"34\" x2=\"62\" y2=\"50\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"60\" cy=\"50\" r=\"4\" fill=\"#555\"/><line x1=\"60\" y1=\"50\" x2=\"72\" y2=\"53\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"72\" cy=\"53\" r=\"4\" fill=\"#555\"/>", "Single-arm DB row": "<rect x=\"8\" y=\"60\" width=\"65\" height=\"8\" rx=\"3\" fill=\"#d4d4d2\" stroke=\"#aaa\" stroke-width=\"1\"/><circle cx=\"80\" cy=\"24\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"73\" y1=\"30\" x2=\"38\" y2=\"44\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"44\" x2=\"28\" y2=\"60\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"44\" x2=\"50\" y2=\"60\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"60\" x2=\"54\" y2=\"75\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"55\" y1=\"37\" x2=\"50\" y2=\"20\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"44\" cy=\"15\" r=\"4\" fill=\"#555\"/><line x1=\"44\" y1=\"15\" x2=\"56\" y2=\"15\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"56\" cy=\"15\" r=\"4\" fill=\"#555\"/>", "Rack pull": "<circle cx=\"50\" cy=\"14\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"21\" x2=\"50\" y2=\"50\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"50\" x2=\"62\" y2=\"50\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"50\" x2=\"36\" y2=\"78\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"50\" x2=\"64\" y2=\"78\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"30\" x2=\"32\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"30\" x2=\"68\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"20\" cy=\"52\" r=\"4\" fill=\"#555\"/><line x1=\"20\" y1=\"52\" x2=\"32\" y2=\"52\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"32\" cy=\"52\" r=\"4\" fill=\"#555\"/><circle cx=\"68\" cy=\"52\" r=\"4\" fill=\"#555\"/><line x1=\"68\" y1=\"52\" x2=\"80\" y2=\"52\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"80\" cy=\"52\" r=\"4\" fill=\"#555\"/><line x1=\"18\" y1=\"38\" x2=\"18\" y2=\"82\" stroke=\"#bbb\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><line x1=\"82\" y1=\"38\" x2=\"82\" y2=\"82\" stroke=\"#bbb\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><line x1=\"18\" y1=\"52\" x2=\"26\" y2=\"52\" stroke=\"#bbb\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><line x1=\"82\" y1=\"52\" x2=\"74\" y2=\"52\" stroke=\"#bbb\" stroke-width=\"1.5\" stroke-linecap=\"round\"/>", "Rear delt fly": "<circle cx=\"76\" cy=\"20\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"69\" y1=\"26\" x2=\"33\" y2=\"42\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"33\" y1=\"42\" x2=\"26\" y2=\"68\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"33\" y1=\"42\" x2=\"43\" y2=\"68\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"52\" y1=\"35\" x2=\"66\" y2=\"20\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"52\" y1=\"35\" x2=\"38\" y2=\"20\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"60\" cy=\"13\" r=\"4\" fill=\"#555\"/><line x1=\"60\" y1=\"13\" x2=\"72\" y2=\"13\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"72\" cy=\"13\" r=\"4\" fill=\"#555\"/><circle cx=\"28\" cy=\"13\" r=\"4\" fill=\"#555\"/><line x1=\"28\" y1=\"13\" x2=\"40\" y2=\"13\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"40\" cy=\"13\" r=\"4\" fill=\"#555\"/>", "DB curl": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"35\" y2=\"44\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"68\" y2=\"46\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"35\" y1=\"44\" x2=\"30\" y2=\"26\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"24\" cy=\"22\" r=\"4\" fill=\"#555\"/><line x1=\"24\" y1=\"22\" x2=\"36\" y2=\"22\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"36\" cy=\"22\" r=\"4\" fill=\"#555\"/><circle cx=\"70\" cy=\"46\" r=\"4\" fill=\"#555\"/><line x1=\"70\" y1=\"46\" x2=\"82\" y2=\"46\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"82\" cy=\"46\" r=\"4\" fill=\"#555\"/>", "Hammer curl": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"35\" y2=\"44\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"68\" y2=\"46\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"35\" y1=\"44\" x2=\"30\" y2=\"26\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"18\" r=\"4\" fill=\"#555\"/><line x1=\"30\" y1=\"18\" x2=\"30\" y2=\"30\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"30\" r=\"4\" fill=\"#555\"/><circle cx=\"72\" cy=\"42\" r=\"4\" fill=\"#555\"/><line x1=\"72\" y1=\"42\" x2=\"72\" y2=\"54\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"72\" cy=\"54\" r=\"4\" fill=\"#555\"/>", "DB floor press": "<line x1=\"5\" y1=\"88\" x2=\"95\" y2=\"88\" stroke=\"#d4d4d2\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><line x1=\"15\" y1=\"82\" x2=\"70\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"77\" cy=\"82\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"35\" y1=\"82\" x2=\"28\" y2=\"74\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"28\" y1=\"74\" x2=\"32\" y2=\"60\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"82\" x2=\"58\" y2=\"74\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"74\" x2=\"54\" y2=\"60\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"26\" cy=\"56\" r=\"4\" fill=\"#555\"/><line x1=\"26\" y1=\"56\" x2=\"38\" y2=\"56\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"38\" cy=\"56\" r=\"4\" fill=\"#555\"/><circle cx=\"48\" cy=\"56\" r=\"4\" fill=\"#555\"/><line x1=\"48\" y1=\"56\" x2=\"60\" y2=\"56\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"60\" cy=\"56\" r=\"4\" fill=\"#555\"/>", "DB floor press (heavy)": "<line x1=\"5\" y1=\"88\" x2=\"95\" y2=\"88\" stroke=\"#d4d4d2\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><line x1=\"15\" y1=\"82\" x2=\"70\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"77\" cy=\"82\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"35\" y1=\"82\" x2=\"28\" y2=\"74\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"28\" y1=\"74\" x2=\"32\" y2=\"60\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"82\" x2=\"58\" y2=\"74\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"74\" x2=\"54\" y2=\"60\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"26\" cy=\"56\" r=\"4\" fill=\"#555\"/><line x1=\"26\" y1=\"56\" x2=\"38\" y2=\"56\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"38\" cy=\"56\" r=\"4\" fill=\"#555\"/><circle cx=\"48\" cy=\"56\" r=\"4\" fill=\"#555\"/><line x1=\"48\" y1=\"56\" x2=\"60\" y2=\"56\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"60\" cy=\"56\" r=\"4\" fill=\"#555\"/>", "DB Romanian deadlift": "<circle cx=\"55\" cy=\"14\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"55\" y1=\"21\" x2=\"55\" y2=\"36\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"55\" y1=\"36\" x2=\"22\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"22\" y1=\"52\" x2=\"20\" y2=\"80\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"22\" y1=\"52\" x2=\"30\" y2=\"80\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"36\" y1=\"44\" x2=\"24\" y2=\"66\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"44\" x2=\"36\" y2=\"65\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"15\" cy=\"64\" r=\"4\" fill=\"#555\"/><line x1=\"15\" y1=\"64\" x2=\"27\" y2=\"68\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"27\" cy=\"68\" r=\"4\" fill=\"#555\"/><circle cx=\"30\" cy=\"62\" r=\"4\" fill=\"#555\"/><line x1=\"30\" y1=\"62\" x2=\"42\" y2=\"66\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"42\" cy=\"66\" r=\"4\" fill=\"#555\"/>", "Chest-supported row": "<rect x=\"12\" y=\"44\" width=\"74\" height=\"10\" rx=\"3\" fill=\"#d4d4d2\" stroke=\"#aaa\" stroke-width=\"1\"/><line x1=\"18\" y1=\"40\" x2=\"78\" y2=\"40\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"85\" cy=\"40\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"36\" y1=\"40\" x2=\"30\" y2=\"56\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"54\" y1=\"40\" x2=\"60\" y2=\"56\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"24\" cy=\"54\" r=\"4\" fill=\"#555\"/><line x1=\"24\" y1=\"54\" x2=\"36\" y2=\"56\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"36\" cy=\"56\" r=\"4\" fill=\"#555\"/><circle cx=\"54\" cy=\"54\" r=\"4\" fill=\"#555\"/><line x1=\"54\" y1=\"54\" x2=\"66\" y2=\"56\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"66\" cy=\"56\" r=\"4\" fill=\"#555\"/>", "Arnold press": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"52\" x2=\"28\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"28\" y1=\"52\" x2=\"28\" y2=\"72\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"52\" x2=\"72\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"72\" y1=\"52\" x2=\"72\" y2=\"72\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"22\" y2=\"38\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"22\" y1=\"38\" x2=\"26\" y2=\"20\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"78\" y2=\"38\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"78\" y1=\"38\" x2=\"74\" y2=\"20\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"18\" cy=\"14\" r=\"4\" fill=\"#555\"/><line x1=\"18\" y1=\"14\" x2=\"30\" y2=\"14\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"14\" r=\"4\" fill=\"#555\"/><circle cx=\"70\" cy=\"14\" r=\"4\" fill=\"#555\"/><line x1=\"70\" y1=\"14\" x2=\"82\" y2=\"14\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"82\" cy=\"14\" r=\"4\" fill=\"#555\"/>", "Close-grip DB press": "<rect x=\"8\" y=\"60\" width=\"82\" height=\"8\" rx=\"3\" fill=\"#d4d4d2\" stroke=\"#aaa\" stroke-width=\"1\"/><line x1=\"16\" y1=\"56\" x2=\"72\" y2=\"56\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"79\" cy=\"56\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"40\" y1=\"56\" x2=\"44\" y2=\"36\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"54\" y1=\"56\" x2=\"50\" y2=\"36\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"38\" cy=\"32\" r=\"4\" fill=\"#555\"/><line x1=\"38\" y1=\"32\" x2=\"56\" y2=\"32\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"56\" cy=\"32\" r=\"4\" fill=\"#555\"/>", "Concentration curl": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"52\" x2=\"28\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"28\" y1=\"52\" x2=\"22\" y2=\"74\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"52\" x2=\"72\" y2=\"52\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"72\" y1=\"52\" x2=\"78\" y2=\"74\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"35\" y2=\"50\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"35\" y1=\"50\" x2=\"30\" y2=\"30\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"22\" cy=\"24\" r=\"4\" fill=\"#555\"/><line x1=\"22\" y1=\"24\" x2=\"34\" y2=\"24\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"34\" cy=\"24\" r=\"4\" fill=\"#555\"/><line x1=\"50\" y1=\"28\" x2=\"66\" y2=\"44\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/>", "Band pull-apart": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"12\" y2=\"28\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"88\" y2=\"28\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"16\" y1=\"28\" x2=\"84\" y2=\"28\" stroke=\"#d97706\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"28\" r=\"4\" fill=\"#555\"/><circle cx=\"88\" cy=\"28\" r=\"4\" fill=\"#555\"/>", "Ab wheel rollout": "<line x1=\"5\" y1=\"88\" x2=\"95\" y2=\"88\" stroke=\"#d4d4d2\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><circle cx=\"58\" cy=\"28\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"58\" y1=\"35\" x2=\"58\" y2=\"58\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"58\" x2=\"44\" y2=\"72\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"44\" y1=\"72\" x2=\"48\" y2=\"86\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"58\" x2=\"68\" y2=\"72\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"68\" y1=\"72\" x2=\"64\" y2=\"86\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"40\" x2=\"22\" y2=\"62\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"18\" cy=\"75\" r=\"10\" fill=\"none\" stroke=\"#555\" stroke-width=\"2.5\"/><line x1=\"18\" y1=\"65\" x2=\"22\" y2=\"62\" stroke=\"#555\" stroke-width=\"1.5\" stroke-linecap=\"round\"/>", "Ab wheel rollout (or plank max hold)": "<line x1=\"5\" y1=\"88\" x2=\"95\" y2=\"88\" stroke=\"#d4d4d2\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><circle cx=\"58\" cy=\"28\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"58\" y1=\"35\" x2=\"58\" y2=\"58\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"58\" x2=\"44\" y2=\"72\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"44\" y1=\"72\" x2=\"48\" y2=\"86\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"58\" x2=\"68\" y2=\"72\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"68\" y1=\"72\" x2=\"64\" y2=\"86\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"40\" x2=\"22\" y2=\"62\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"18\" cy=\"75\" r=\"10\" fill=\"none\" stroke=\"#555\" stroke-width=\"2.5\"/><line x1=\"18\" y1=\"65\" x2=\"22\" y2=\"62\" stroke=\"#555\" stroke-width=\"1.5\" stroke-linecap=\"round\"/>", "Plank or ab wheel": "<line x1=\"5\" y1=\"88\" x2=\"95\" y2=\"88\" stroke=\"#d4d4d2\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><circle cx=\"58\" cy=\"28\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"58\" y1=\"35\" x2=\"58\" y2=\"58\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"58\" x2=\"44\" y2=\"72\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"44\" y1=\"72\" x2=\"48\" y2=\"86\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"58\" x2=\"68\" y2=\"72\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"68\" y1=\"72\" x2=\"64\" y2=\"86\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"40\" x2=\"22\" y2=\"62\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"18\" cy=\"75\" r=\"10\" fill=\"none\" stroke=\"#555\" stroke-width=\"2.5\"/><line x1=\"18\" y1=\"65\" x2=\"22\" y2=\"62\" stroke=\"#555\" stroke-width=\"1.5\" stroke-linecap=\"round\"/>", "Bicycle crunches": "<line x1=\"5\" y1=\"88\" x2=\"95\" y2=\"88\" stroke=\"#d4d4d2\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><line x1=\"20\" y1=\"82\" x2=\"72\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"80\" cy=\"82\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"52\" y1=\"82\" x2=\"46\" y2=\"66\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"46\" y1=\"66\" x2=\"56\" y2=\"58\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"30\" y1=\"82\" x2=\"16\" y2=\"72\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"72\" y1=\"82\" x2=\"70\" y2=\"70\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"70\" y1=\"70\" x2=\"55\" y2=\"58\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"72\" y1=\"82\" x2=\"82\" y2=\"70\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/>", "Leg raises": "<line x1=\"5\" y1=\"88\" x2=\"95\" y2=\"88\" stroke=\"#d4d4d2\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><line x1=\"18\" y1=\"84\" x2=\"68\" y2=\"84\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"76\" cy=\"84\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"28\" y1=\"84\" x2=\"22\" y2=\"56\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"40\" y1=\"84\" x2=\"46\" y2=\"56\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"60\" y1=\"84\" x2=\"74\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"28\" y1=\"84\" x2=\"14\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/>", "Plank": "<line x1=\"5\" y1=\"88\" x2=\"95\" y2=\"88\" stroke=\"#d4d4d2\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><line x1=\"18\" y1=\"70\" x2=\"80\" y2=\"70\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"87\" cy=\"70\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"24\" y1=\"70\" x2=\"18\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"36\" y1=\"70\" x2=\"30\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"62\" y1=\"70\" x2=\"58\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"74\" y1=\"70\" x2=\"80\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/>", "Core circuit: plank + leg raise": "<line x1=\"5\" y1=\"88\" x2=\"95\" y2=\"88\" stroke=\"#d4d4d2\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><line x1=\"18\" y1=\"70\" x2=\"80\" y2=\"70\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"87\" cy=\"70\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"24\" y1=\"70\" x2=\"18\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"36\" y1=\"70\" x2=\"30\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"62\" y1=\"70\" x2=\"58\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"74\" y1=\"70\" x2=\"80\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/>", "Superset: DB curl + overhead tricep ext": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"35\" y2=\"44\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"68\" y2=\"46\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"35\" y1=\"44\" x2=\"30\" y2=\"26\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"24\" cy=\"22\" r=\"4\" fill=\"#555\"/><line x1=\"24\" y1=\"22\" x2=\"36\" y2=\"22\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"36\" cy=\"22\" r=\"4\" fill=\"#555\"/><circle cx=\"70\" cy=\"46\" r=\"4\" fill=\"#555\"/><line x1=\"70\" y1=\"46\" x2=\"82\" y2=\"46\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"82\" cy=\"46\" r=\"4\" fill=\"#555\"/>", "Superset: hammer curl + tricep kickback": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"35\" y2=\"44\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"68\" y2=\"46\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"35\" y1=\"44\" x2=\"30\" y2=\"26\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"18\" r=\"4\" fill=\"#555\"/><line x1=\"30\" y1=\"18\" x2=\"30\" y2=\"30\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"30\" r=\"4\" fill=\"#555\"/><circle cx=\"72\" cy=\"42\" r=\"4\" fill=\"#555\"/><line x1=\"72\" y1=\"42\" x2=\"72\" y2=\"54\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"72\" cy=\"54\" r=\"4\" fill=\"#555\"/>", "Lateral raises + tricep ext (superset)": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"12\" y2=\"28\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"88\" y2=\"28\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"6\" cy=\"24\" r=\"4\" fill=\"#555\"/><line x1=\"6\" y1=\"24\" x2=\"6\" y2=\"32\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"6\" cy=\"32\" r=\"4\" fill=\"#555\"/><circle cx=\"94\" cy=\"24\" r=\"4\" fill=\"#555\"/><line x1=\"94\" y1=\"24\" x2=\"94\" y2=\"32\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"94\" cy=\"32\" r=\"4\" fill=\"#555\"/>", "Rear delt fly + DB curl (superset)": "<circle cx=\"76\" cy=\"20\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"69\" y1=\"26\" x2=\"33\" y2=\"42\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"33\" y1=\"42\" x2=\"26\" y2=\"68\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"33\" y1=\"42\" x2=\"43\" y2=\"68\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"52\" y1=\"35\" x2=\"66\" y2=\"20\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"52\" y1=\"35\" x2=\"38\" y2=\"20\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"60\" cy=\"13\" r=\"4\" fill=\"#555\"/><line x1=\"60\" y1=\"13\" x2=\"72\" y2=\"13\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"72\" cy=\"13\" r=\"4\" fill=\"#555\"/><circle cx=\"28\" cy=\"13\" r=\"4\" fill=\"#555\"/><line x1=\"28\" y1=\"13\" x2=\"40\" y2=\"13\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"40\" cy=\"13\" r=\"4\" fill=\"#555\"/>", "Curl + tricep ext (superset)": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"35\" y2=\"44\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"68\" y2=\"46\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"35\" y1=\"44\" x2=\"30\" y2=\"26\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"24\" cy=\"22\" r=\"4\" fill=\"#555\"/><line x1=\"24\" y1=\"22\" x2=\"36\" y2=\"22\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"36\" cy=\"22\" r=\"4\" fill=\"#555\"/><circle cx=\"70\" cy=\"46\" r=\"4\" fill=\"#555\"/><line x1=\"70\" y1=\"46\" x2=\"82\" y2=\"46\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"82\" cy=\"46\" r=\"4\" fill=\"#555\"/>", "Arms superset (curl + ext)": "<circle cx=\"50\" cy=\"12\" r=\"7\" fill=\"#1a1a1a\"/><line x1=\"50\" y1=\"19\" x2=\"50\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"38\" y1=\"55\" x2=\"62\" y2=\"55\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"55\" x2=\"35\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"55\" x2=\"65\" y2=\"82\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"35\" y2=\"44\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"28\" x2=\"68\" y2=\"46\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"35\" y1=\"44\" x2=\"30\" y2=\"26\" stroke=\"#1a1a1a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"24\" cy=\"22\" r=\"4\" fill=\"#555\"/><line x1=\"24\" y1=\"22\" x2=\"36\" y2=\"22\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"36\" cy=\"22\" r=\"4\" fill=\"#555\"/><circle cx=\"70\" cy=\"46\" r=\"4\" fill=\"#555\"/><line x1=\"70\" y1=\"46\" x2=\"82\" y2=\"46\" stroke=\"#555\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"82\" cy=\"46\" r=\"4\" fill=\"#555\"/>"};
+
+function showExercise(name) {
+  const svg = EX_SVGS[name];
+  const box = document.getElementById('ex-modal-box');
+  const lbl = document.getElementById('ex-modal-name');
+  if (!box || !lbl) return;
+  box.innerHTML = svg ? '<svg viewBox="0 0 100 100" width="160" height="160" style="display:block;margin:0 auto">' + svg + '</svg>' : '<div style="padding:20px;color:#737373;font-size:13px">No diagram available</div>';
+  lbl.textContent = name;
+  const ytQ = encodeURIComponent('jeff nippard how to ' + name.toLowerCase().replace(/\(.*?\)/g,'').trim());
+  document.getElementById('ex-yt-link').href = 'https://www.youtube.com/results?search_query=' + ytQ;
+  document.getElementById('ex-modal').style.display = 'flex';
+}
+function closeExModal(e) {
+  if (!e || e.target === document.getElementById('ex-modal'))
+    document.getElementById('ex-modal').style.display = 'none';
+}
+
+
+
+
+function setView(v){ currentView=v; render(); }
+
+function logWeight(){
+  const el=document.getElementById('wt-val');
+  const val=parseFloat(el.value);
+  if(isNaN(val)||val<100||val>400) return;
+  const today=new Date().toISOString().split('T')[0];
+  weightLog=weightLog.filter(e=>e.d!==today);
+  weightLog.push({d:today,w:val});
+  weightLog.sort((a,b)=>a.d.localeCompare(b.d));
+  localStorage.setItem('u50-weight',JSON.stringify(weightLog));
+  render();
+}
+
+function getWkData(w){
+  if(!program) return {target:0,done:0,phase:'Cut + Base'};
+  const days=program.filter(d=>d.week===w);
+  const target=Math.round(days.reduce((s,d)=>s+(d.run?d.run.miles:0),0));
+  const done=Math.round(days.reduce((s,d)=>{const k=`${d.week}-${d.day}`;return s+(completed.includes(k)&&d.run?d.run.miles:0);},0));
+  return {target,done,phase:days[0]?.phase||'Taper'};
+}
+function getTotalMi(){return program?Math.round(program.reduce((s,d)=>s+(d.run?d.run.miles:0),0)):0;}
+function getDoneMi(){return program?Math.round(program.reduce((s,d)=>{const k=`${d.week}-${d.day}`;return s+(completed.includes(k)&&d.run?d.run.miles:0);},0)):0;}
+function getStreak(){
+  if(!program) return 0;
+  let st=0,tod=getTodayIdx();
+  for(let i=tod;i>=0;i--){
+    const d=program[i];
+    if(!d.run&&!d.lift) continue;
+    if(completed.includes(`${d.week}-${d.day}`)) st++;
+    else break;
+  }
+  return st;
+}
+function getEfforts(){
+  const r={e:0,m:0,h:0};
+  if(!program) return r;
+  program.forEach(d=>{
+    const k=`${d.week}-${d.day}`;
+    if(completed.includes(k)&&d.run){
+      if(d.run.effort==='Easy') r.e++;
+      else if(d.run.effort==='Moderate') r.m++;
+      else r.h++;
+    }
+  });
+  return r;
+}
+function daysToRace(){
+  const race=new Date(2026,8,1);
+  const now=new Date();now.setHours(0,0,0,0);
+  return Math.max(0,Math.round((race-now)/86400000));
+}
+
+function loadArcSVG(){
+  const W=310,H=168,pl=36,pr=40,pt=22,pb=28,cw=W-pl-pr,ch=H-pt-pb;
+  const phC={'Cut + Base':'#fb923c','Aerobic Build':'#3b82f6','Peak':'#22c55e','Taper':'#a855f7'};
+  const wks=Array.from({length:20},(_,i)=>({...getWkData(i+1),w:i+1}));
+  const maxM=Math.max(...wks.map(d=>d.target),1);
+  const curW=program[viewIdx]?.week||1;
+  const bw=Math.floor(cw/20)-2;
+  // Collect avg RPE per week from runLog
+  const wkRPE=Array.from({length:20},(_,i)=>{
+    const w=i+1;
+    const days=program.filter(d=>d.week===w&&d.run);
+    const rpes=days.map(d=>{const k=`${d.week}-${d.day}`;return runLog[k]?.rpe;}).filter(r=>r!=null);
+    return rpes.length?rpes.reduce((a,b)=>a+b,0)/rpes.length:null;
+  });
+  const hasRPE=wkRPE.some(r=>r!=null);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">`;
+  s+=`<text x="${pl}" y="13" font-size="10" font-weight="700" fill="#1a1a1a">Weekly mileage — all 20 weeks</text>`;
+  s+=`<text x="9" y="${pt+ch/2+16}" font-size="8" fill="#a3a3a3" text-anchor="middle" transform="rotate(-90,9,${pt+ch/2+16})">mi / wk</text>`;
+  if(hasRPE){
+    s+=`<text x="${W-2}" y="${pt+ch/2+16}" font-size="8" fill="#f43f5e" text-anchor="middle" transform="rotate(90,${W-2},${pt+ch/2+16})">avg RPE</text>`;
+  }
+  [20,40,58].forEach(mi=>{
+    const y=pt+ch-(mi/maxM)*ch;
+    s+=`<line x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}" stroke="#f5f5f3" stroke-width="1"/>`;
+    s+=`<text x="${pl-3}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="8" fill="#d4d4d2">${mi}</text>`;
+  });
+  wks.forEach(({w,target,done,phase})=>{
+    const x=pl+(w-1)*(cw/20);
+    const c=phC[phase]||'#888';
+    const th=(target/maxM)*ch, dh=(done/maxM)*ch;
+    s+=`<rect x="${(x+1).toFixed(1)}" y="${(pt+ch-th).toFixed(1)}" width="${bw}" height="${th.toFixed(1)}" rx="2" fill="${c}" opacity="0.2"/>`;
+    if(done>0) s+=`<rect x="${(x+1).toFixed(1)}" y="${(pt+ch-dh).toFixed(1)}" width="${bw}" height="${dh.toFixed(1)}" rx="2" fill="${c}"/>`;
+    if(w===curW) s+=`<rect x="${x.toFixed(1)}" y="${pt}" width="${bw+2}" height="${ch}" rx="2" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>`;
+    if(w%5===0||w===1) s+=`<text x="${(x+bw/2).toFixed(1)}" y="${H-5}" text-anchor="middle" font-size="8" fill="#a3a3a3">${w}</text>`;
+  });
+  // RPE overlay — dots connected by line, scale 1-10 mapped to chart height
+  if(hasRPE){
+    const rpeY=r=>pt+ch-(((r-1)/9)*ch);
+    const rpePts=wkRPE.map((r,i)=>r!=null?{x:pl+(i*(cw/20))+(bw/2),y:rpeY(r)}:null).filter(Boolean);
+    if(rpePts.length>1){
+      s+=`<polyline points="${rpePts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}" fill="none" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.7"/>`;
+    }
+    rpePts.forEach(p=>{
+      s+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#f43f5e" stroke="#fff" stroke-width="1"/>`;
+    });
+    // RPE right axis labels
+    [2,5,8,10].forEach(r=>{
+      s+=`<text x="${W-pr+4}" y="${(rpeY(r)+3).toFixed(1)}" font-size="7" fill="#f43f5e">${r}</text>`;
+    });
+  }
+  s+=`<line x1="${pl}" y1="${pt+ch}" x2="${W-pr}" y2="${pt+ch}" stroke="#e5e5e3" stroke-width="1"/>`;
+  // Legend
+  if(hasRPE){
+    s+=`<circle cx="${pl}" cy="${H-14}" r="3" fill="#f43f5e"/><text x="${pl+6}" y="${H-11}" font-size="8" fill="#a3a3a3">avg RPE (right axis)</text>`;
+  }
+  return s+'</svg>';
+}
+
+function longRunSVG(){
+  const W=310,H=130,pl=26,pr=44,pt=18,pb=24,cw=W-pl-pr,ch=H-pt-pb;
+  const curW=program[viewIdx]?.week||1;
+  const pts=Array.from({length:20},(_,i)=>{
+    const w=i+1;
+    const runs=program.filter(d=>d.week===w&&d.run);
+    if(!runs.length) return {w,mi:0,done:false,pace:null};
+    const mi=Math.max(...runs.map(d=>d.run.miles));
+    const lr=runs.find(d=>d.run.miles===mi);
+    const dk=lr?`${lr.week}-${lr.day}`:null;
+    // Parse pace string "m:ss" -> decimal minutes
+    const paceStr=dk?runLog[dk]?.pace:null;
+    let pace=null;
+    if(paceStr&&paceStr.includes(':')){
+      const [mm,ss]=paceStr.split(':');
+      const p=parseFloat(mm)+parseFloat(ss||0)/60;
+      if(!isNaN(p)&&p>0) pace=p;
+    }
+    return {w,mi,done:lr?completed.includes(`${lr.week}-${lr.day}`):false,pace};
+  });
+  const maxM=Math.max(...pts.map(p=>p.mi),1);
+  const xS=w=>pl+((w-1)/19)*cw;
+  const yS=m=>pt+ch-(m/maxM)*ch;
+  const pacePts=pts.filter(p=>p.pace!=null);
+  const hasPace=pacePts.length>0;
+  // Pace axis: slower pace = higher y value (worse), faster = lower y (better)
+  // We want faster pace at top, so invert: low pace value = top of chart
+  const minP=hasPace?Math.max(6,Math.min(...pacePts.map(p=>p.pace))-0.5):6;
+  const maxP=hasPace?Math.min(18,Math.max(...pacePts.map(p=>p.pace))+0.5):18;
+  const yP=pace=>pt+((pace-minP)/(maxP-minP))*ch; // slower = lower on chart
+  function fmtPace(dec){const m=Math.floor(dec);const s=Math.round((dec-m)*60);return `${m}:${s.toString().padStart(2,'0')}`;}
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">`;
+  s+=`<text x="${pl}" y="12" font-size="10" font-weight="700" fill="#1a1a1a">Long run progression</text>`;
+  // Gridlines + left axis
+  [7,14,20,24].forEach(mi=>{
+    const y=yS(mi);
+    s+=`<line x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}" stroke="#f5f5f3" stroke-width="1"/>`;
+    s+=`<text x="${pl-3}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="8" fill="#d4d4d2">${mi}</text>`;
+  });
+  // Distance planned dashed line
+  const allValid=pts.filter(p=>p.mi>0);
+  if(allValid.length>1) s+=`<polyline points="${allValid.map(p=>`${xS(p.w).toFixed(1)},${yS(p.mi).toFixed(1)}`).join(' ')}" fill="none" stroke="#e5e5e3" stroke-width="1.5" stroke-dasharray="3,3"/>`;
+  // Distance completed green line
+  const done=pts.filter(p=>p.done&&p.mi>0);
+  if(done.length>1) s+=`<polyline points="${done.map(p=>`${xS(p.w).toFixed(1)},${yS(p.mi).toFixed(1)}`).join(' ')}" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  // Distance dots
+  allValid.forEach(p=>{
+    const cx=xS(p.w).toFixed(1),cy=yS(p.mi).toFixed(1);
+    s+=`<circle cx="${cx}" cy="${cy}" r="3.5" fill="${p.done?'#22c55e':'#e5e5e3'}" stroke="${p.done?'#16a34a':'#d1d5db'}" stroke-width="1"/>`;
+    if(p.w===curW) s+=`<circle cx="${cx}" cy="${cy}" r="6" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>`;
+  });
+  // Pace overlay — orange line, faster=higher on chart
+  if(hasPace){
+    if(pacePts.length>1){
+      s+=`<polyline points="${pacePts.map(p=>`${xS(p.w).toFixed(1)},${yP(p.pace).toFixed(1)}`).join(' ')}" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+    pacePts.forEach(p=>{
+      const cx=xS(p.w).toFixed(1),cy=yP(p.pace).toFixed(1);
+      s+=`<circle cx="${cx}" cy="${cy}" r="3.5" fill="#f97316" stroke="#fff" stroke-width="1.5"/>`;
+      s+=`<text x="${(parseFloat(cx)+5).toFixed(1)}" y="${(parseFloat(cy)-4).toFixed(1)}" font-size="7" fill="#f97316">${fmtPace(p.pace)}</text>`;
+    });
+    // Right axis pace labels
+    const pTicks=[minP+(maxP-minP)*0.1, minP+(maxP-minP)*0.5, minP+(maxP-minP)*0.9];
+    pTicks.forEach(p=>{
+      s+=`<text x="${W-pr+4}" y="${(yP(p)+3).toFixed(1)}" font-size="7" fill="#f97316">${fmtPace(p)}</text>`;
+    });
+    s+=`<text x="${W-4}" y="${pt+ch/2}" font-size="8" fill="#f97316" text-anchor="middle" transform="rotate(90,${W-4},${pt+ch/2})">pace</text>`;
+  }
+  // Axes
+  s+=`<line x1="${pl}" y1="${pt+ch}" x2="${W-pr}" y2="${pt+ch}" stroke="#e5e5e3" stroke-width="1"/>`;
+  [1,5,10,15,20].forEach(w=>{ s+=`<text x="${xS(w).toFixed(1)}" y="${H-5}" text-anchor="middle" font-size="8" fill="#a3a3a3">${w}</text>`; });
+  // Legend
+  s+=`<circle cx="${pl}" cy="${H-13}" r="3" fill="#22c55e"/><text x="${pl+6}" y="${H-10}" font-size="8" fill="#a3a3a3">completed</text>`;
+  if(hasPace) s+=`<circle cx="${pl+70}" cy="${H-13}" r="3" fill="#f97316"/><text x="${pl+76}" y="${H-10}" font-size="8" fill="#a3a3a3">pace (right)</text>`;
+  return s+'</svg>';
+}
+
+function donutSVG(e,m,h){
+  const total=e+m+h;
+  const cx=40,cy=40,r=27,sw=10,circ=2*Math.PI*r;
+  let s=`<svg viewBox="0 0 80 80" width="80" height="80">`;
+  s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f5f5f3" stroke-width="${sw}"/>`;
+  if(total>0){
+    let off=0;
+    [[e,'#4ade80'],[m,'#fb923c'],[h,'#f87171']].forEach(([v,c])=>{
+      const d=(v/total)*circ;
+      s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-dasharray="${d.toFixed(2)} ${(circ-d).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;
+      off+=d;
+    });
+  }
+  s+=`<text x="${cx}" y="${cy+4}" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">${total}</text>`;
+  s+=`<text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="7" fill="#a3a3a3">runs</text>`;
+  return s+'</svg>';
+}
+
+function wtSparkSVG(){
+  if(weightLog.length<1) return '<div style="font-size:12px;color:#a3a3a3;margin-top:10px">Log your first entry above to start the graph.</div>';
+  const W=310,H=190,pl=36,pr=16,pt=22,pb=32,cw=W-pl-pr,ch=H-pt-pb;
+  const vals=weightLog.map(e=>e.w);
+  const rawMin=Math.min(...vals,175), rawMax=Math.max(...vals,200);
+  const pad=3;
+  const minV=rawMin-pad, maxV=rawMax+pad;
+  const n=Math.max(weightLog.length-1,1);
+  const xS=i=>pl+(i/n)*cw;
+  const yS=v=>pt+ch-((v-minV)/(maxV-minV))*ch;
+  // Map a date string to x position based on weightLog date range
+  const d0=new Date(weightLog[0].d);
+  const d1=new Date(weightLog[weightLog.length-1].d);
+  const span=Math.max(1,d1-d0);
+  const xDate=d=>pl+((new Date(d)-d0)/span)*cw;
+  const phaseStarts=[
+    {d:'2026-04-15',label:'Ph1',c:'#fb923c'},
+    {d:'2026-05-20',label:'Ph2',c:'#3b82f6'},
+    {d:'2026-06-24',label:'Ph3',c:'#22c55e'},
+    {d:'2026-08-12',label:'Taper',c:'#a855f7'},
+  ];
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;margin-top:12px">`;
+  s+=`<text x="${pl}" y="14" font-size="10" font-weight="700" fill="#1a1a1a">Weight trend</text>`;
+  // Gridlines + y labels
+  const yTicks=[];
+  for(let v=Math.ceil(minV/5)*5;v<=maxV;v+=5) yTicks.push(v);
+  yTicks.forEach(v=>{
+    const y=yS(v).toFixed(1);
+    s+=`<line x1="${pl}" y1="${y}" x2="${W-pr}" y2="${y}" stroke="#f0f0ef" stroke-width="1"/>`;
+    s+=`<text x="${pl-5}" y="${(parseFloat(y)+3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="#a3a3a3">${v}</text>`;
+  });
+  // Phase boundary lines
+  phaseStarts.forEach(({d,label,c})=>{
+    const nd=new Date(d);
+    if(nd>=d0&&nd<=d1){
+      const x=xDate(d).toFixed(1);
+      s+=`<line x1="${x}" y1="${pt}" x2="${x}" y2="${pt+ch}" stroke="${c}" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>`;
+      s+=`<text x="${x}" y="${pt-3}" font-size="8" fill="${c}" font-weight="600">${label}</text>`;
+    }
+  });
+  // Start/goal lines
+  if(maxV>=200){
+    const sy=yS(200).toFixed(1);
+    s+=`<line x1="${pl}" y1="${sy}" x2="${W-pr}" y2="${sy}" stroke="#f87171" stroke-width="1" stroke-dasharray="4,3"/>`;
+    s+=`<text x="${W-pr+3}" y="${(parseFloat(sy)+3).toFixed(1)}" font-size="9" fill="#f87171" font-weight="600">200</text>`;
+  }
+  const gy=yS(175).toFixed(1);
+  s+=`<line x1="${pl}" y1="${gy}" x2="${W-pr}" y2="${gy}" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  s+=`<text x="${W-pr+3}" y="${(parseFloat(gy)+3).toFixed(1)}" font-size="9" fill="#22c55e" font-weight="600">Goal</text>`;
+  // Area + line
+  if(weightLog.length>1){
+    const pts=weightLog.map((e,i)=>`${xS(i).toFixed(1)},${yS(e.w).toFixed(1)}`).join(' ');
+    const firstX=xS(0).toFixed(1), lastX=xS(weightLog.length-1).toFixed(1), baseY=(pt+ch).toFixed(1);
+    s+=`<polygon points="${firstX},${baseY} ${pts} ${lastX},${baseY}" fill="#3b82f6" opacity="0.08"/>`;
+    s+=`<polyline points="${pts}" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }
+  // Data points
+  const step=Math.max(1,Math.floor(weightLog.length/6));
+  weightLog.forEach((e,i)=>{
+    const cx=xS(i).toFixed(1),cy=yS(e.w).toFixed(1);
+    s+=`<circle cx="${cx}" cy="${cy}" r="3.5" fill="#3b82f6" stroke="#fff" stroke-width="1.5"/>`;
+    s+=`<text x="${cx}" y="${(parseFloat(cy)-7).toFixed(1)}" text-anchor="middle" font-size="8" fill="#3b82f6" font-weight="600">${e.w}</text>`;
+    if(i===0||i===weightLog.length-1||i%step===0){
+      const d=new Date(e.d);
+      s+=`<text x="${cx}" y="${H-10}" text-anchor="middle" font-size="9" fill="#a3a3a3">${d.getMonth()+1}/${d.getDate()}</text>`;
+    }
+  });
+  // Axes
+  s+=`<line x1="${pl}" y1="${pt}" x2="${pl}" y2="${pt+ch}" stroke="#e5e5e3" stroke-width="1"/>`;
+  s+=`<line x1="${pl}" y1="${pt+ch}" x2="${W-pr}" y2="${pt+ch}" stroke="#e5e5e3" stroke-width="1"/>`;
+  if(weightLog.length>=2){
+    const lost=(weightLog[0].w-weightLog[weightLog.length-1].w).toFixed(1);
+    const toGo=(weightLog[weightLog.length-1].w-175).toFixed(1);
+    s+=`<text x="${pl}" y="${pt-7}" font-size="9" fill="#737373">Lost: <tspan font-weight="700" fill="#3b82f6">${lost>0?lost:0} lbs</tspan>  ·  To goal: <tspan font-weight="700" fill="#22c55e">${toGo>0?toGo:0} lbs</tspan></text>`;
+  }
+  return s+'</svg>';
+}
+
+function rhrSleepSVG(){
+  // Collect dailyLog entries that have rhr or sleep
+  const entries=[];
+  for(const [dk,v] of Object.entries(dailyLog)){
+    if(!v.rhr&&!v.sleep) continue;
+    // dk format: "week-Day" e.g. "1-Wed" — find date from program
+    const day=program.find(d=>`${d.week}-${d.day}`===dk);
+    if(!day) continue;
+    entries.push({date:day.date,rhr:v.rhr?parseFloat(v.rhr):null,sleep:v.sleep?parseFloat(v.sleep):null});
+  }
+  entries.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(entries.length<1) return '<div style="font-size:12px;color:#a3a3a3;margin-top:6px">Log sleep and RHR from your Apple Watch to see trends here.</div>';
+  const W=310,H=150,pl=36,pr=36,pt=20,pb=24,cw=W-pl-pr,ch=H-pt-pb;
+  const n=Math.max(entries.length-1,1);
+  const xS=i=>pl+(i/n)*cw;
+  const rhrVals=entries.map(e=>e.rhr).filter(r=>r!=null);
+  const sleepVals=entries.map(e=>e.sleep).filter(s=>s!=null);
+  const hasRHR=rhrVals.length>0, hasSleep=sleepVals.length>0;
+  const minR=hasRHR?Math.min(...rhrVals)-5:40, maxR=hasRHR?Math.max(...rhrVals)+5:80;
+  const minS=hasSleep?Math.min(...sleepVals,6)-0.5:4, maxS=hasSleep?Math.max(...sleepVals,9)+0.5:10;
+  const yR=r=>pt+ch-((r-minR)/(maxR-minR))*ch;
+  const yS2=s=>pt+ch-((s-minS)/(maxS-minS))*ch;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;margin-top:6px">`;
+  s+=`<text x="${pl}" y="13" font-size="10" font-weight="700" fill="#1a1a1a">Recovery — RHR &amp; sleep</text>`;
+  // Gridlines
+  [3,5,7,9].forEach(h=>{
+    if(h>=minS&&h<=maxS){
+      const y=yS2(h).toFixed(1);
+      s+=`<line x1="${pl}" y1="${y}" x2="${W-pr}" y2="${y}" stroke="#f5f5f3" stroke-width="1"/>`;
+    }
+  });
+  // Sleep bars (background)
+  if(hasSleep){
+    entries.forEach((e,i)=>{
+      if(e.sleep==null) return;
+      const x=xS(i).toFixed(1);
+      const y=yS2(e.sleep).toFixed(1);
+      const barH=(pt+ch-parseFloat(y)).toFixed(1);
+      const c=e.sleep>=7?'#22c55e':e.sleep>=6?'#fb923c':'#f87171';
+      s+=`<rect x="${(parseFloat(x)-5).toFixed(1)}" y="${y}" width="10" height="${barH}" rx="2" fill="${c}" opacity="0.25"/>`;
+    });
+    // Sleep line
+    const slPts=entries.map((e,i)=>e.sleep!=null?`${xS(i).toFixed(1)},${yS2(e.sleep).toFixed(1)}`:null).filter(Boolean);
+    if(slPts.length>1) s+=`<polyline points="${slPts.join(' ')}" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.6"/>`;
+    // Right axis sleep
+    [6,7,8,9].forEach(h=>{
+      if(h>=minS&&h<=maxS) s+=`<text x="${W-pr+4}" y="${(yS2(h)+3).toFixed(1)}" font-size="7" fill="#22c55e">${h}h</text>`;
+    });
+    s+=`<text x="${W-4}" y="${pt+ch/2}" font-size="8" fill="#22c55e" text-anchor="middle" transform="rotate(90,${W-4},${pt+ch/2})">sleep</text>`;
+  }
+  // RHR line (foreground)
+  if(hasRHR){
+    const rhrPts=entries.filter(e=>e.rhr!=null);
+    if(rhrPts.length>1){
+      const coords=entries.map((e,i)=>e.rhr!=null?`${xS(i).toFixed(1)},${yR(e.rhr).toFixed(1)}`:null).filter(Boolean);
+      s+=`<polyline points="${coords.join(' ')}" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+    // Baseline avg line
+    const avgRHR=rhrVals.reduce((a,b)=>a+b,0)/rhrVals.length;
+    s+=`<line x1="${pl}" y1="${yR(avgRHR).toFixed(1)}" x2="${W-pr}" y2="${yR(avgRHR).toFixed(1)}" stroke="#f43f5e" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>`;
+    s+=`<text x="${pl+2}" y="${(yR(avgRHR)-3).toFixed(1)}" font-size="7" fill="#f43f5e" opacity="0.7">avg ${Math.round(avgRHR)}</text>`;
+    entries.forEach((e,i)=>{
+      if(e.rhr==null) return;
+      const cx=xS(i).toFixed(1),cy=yR(e.rhr).toFixed(1);
+      const spike=e.rhr>avgRHR+5;
+      s+=`<circle cx="${cx}" cy="${cy}" r="${spike?5:3}" fill="${spike?'#f43f5e':'#f87171'}" stroke="#fff" stroke-width="1"/>`;
+      if(spike) s+=`<text x="${cx}" y="${(parseFloat(cy)-7).toFixed(1)}" text-anchor="middle" font-size="8" fill="#f43f5e" font-weight="700">!</text>`;
+    });
+    // Left axis RHR
+    const rTicks=[Math.round(minR+5),Math.round((minR+maxR)/2),Math.round(maxR-5)];
+    rTicks.forEach(r=>{
+      s+=`<text x="${pl-4}" y="${(yR(r)+3).toFixed(1)}" text-anchor="end" font-size="7" fill="#f43f5e">${r}</text>`;
+    });
+    s+=`<text x="9" y="${pt+ch/2}" font-size="8" fill="#f43f5e" text-anchor="middle" transform="rotate(-90,9,${pt+ch/2})">RHR</text>`;
+  }
+  // X axis date labels
+  const step=Math.max(1,Math.floor(entries.length/5));
+  entries.forEach((e,i)=>{
+    if(i===0||i===entries.length-1||i%step===0){
+      const d=new Date(e.date);
+      s+=`<text x="${xS(i).toFixed(1)}" y="${H-5}" text-anchor="middle" font-size="8" fill="#a3a3a3">${d.getMonth()+1}/${d.getDate()}</text>`;
+    }
+  });
+  s+=`<line x1="${pl}" y1="${pt+ch}" x2="${W-pr}" y2="${pt+ch}" stroke="#e5e5e3" stroke-width="1"/>`;
+  // Legend
+  if(hasRHR) s+=`<circle cx="${pl}" cy="${H-13}" r="3" fill="#f43f5e"/><text x="${pl+6}" y="${H-10}" font-size="8" fill="#a3a3a3">RHR (bpm) — spike=!</text>`;
+  if(hasSleep) s+=`<rect x="${hasSleep&&hasRHR?pl+130:pl}" y="${H-16}" width="8" height="8" rx="2" fill="#22c55e" opacity="0.4"/><text x="${(hasSleep&&hasRHR?pl+142:pl+12)}" y="${H-10}" font-size="8" fill="#a3a3a3">sleep hrs (right)</text>`;
+  return s+'</svg>';
+}
+
+function renderOverview(){
+  if(!program) return '<div style="padding:24px;text-align:center;color:#737373;font-size:13px">Import a program to see stats.</div>';
+  const curW=program[viewIdx]?.week||1;
+  const dtr=daysToRace();
+  const totalMi=getTotalMi(),doneMi=getDoneMi();
+  const miPct=Math.round(doneMi/totalMi*100)||0;
+  const streak=getStreak();
+  const compPct=Math.round(completed.length/140*100)||0;
+  const {target:wkT,done:wkD}=getWkData(curW);
+  const wkPct=wkT?Math.round(Math.min(100,wkD/wkT*100)):0;
+  const {e,m,h}=getEfforts();
+  const eff=e+m+h;
+  const lastWt=weightLog.length?weightLog[weightLog.length-1].w:null;
+  const wtPct=lastWt?Math.round(Math.max(0,Math.min(100,(200-lastWt)/25*100))):0;
+
+  return `
+  <div class="ov-section" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="stat-pill" style="background:#fff7ed">
+      <div style="font-size:36px;font-weight:700;color:#ea580c;line-height:1">${dtr}</div>
+      <div style="font-size:11px;color:#9a6030;margin-top:4px">days to race day</div>
+    </div>
+    <div class="stat-pill">
+      <div style="font-size:36px;font-weight:700;color:#1a1a1a;line-height:1">${compPct}%</div>
+      <div style="font-size:11px;color:#737373;margin-top:4px">${completed.length} / 140 days done</div>
+    </div>
+  </div>
+
+  <div class="ov-section">
+    <div class="ov-label" style="margin-bottom:6px">Training load — 20 weeks</div>
+    <div style="display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+      ${[['Ph1','#fb923c'],['Ph2','#3b82f6'],['Ph3','#22c55e'],['Ph4','#a855f7']].map(([l,c])=>`<span style="display:flex;align-items:center;gap:3px;font-size:10px;color:#737373"><span style="width:8px;height:8px;border-radius:2px;background:${c};display:inline-block"></span>${l}</span>`).join('')}
+      <span style="font-size:9px;color:#d4d4d2;margin-left:2px">faded=target · solid=done · box=now</span>
+    </div>
+    ${loadArcSVG()}
+  </div>
+
+  <div class="ov-section" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div>
+      <div class="ov-label">Week ${curW} miles</div>
+      <div style="font-size:26px;font-weight:700;line-height:1">${wkD}<span style="font-size:13px;font-weight:400;color:#737373"> / ${wkT}mi</span></div>
+      <div style="height:5px;background:#f0f0ef;border-radius:999px;margin-top:10px;overflow:hidden">
+        <div style="width:${wkPct}%;height:100%;background:#3b82f6;border-radius:999px;transition:width 0.4s"></div>
+      </div>
+    </div>
+    <div>
+      <div class="ov-label">Streak</div>
+      <div style="font-size:26px;font-weight:700;line-height:1">${streak}<span style="font-size:13px;font-weight:400;color:#737373"> days</span></div>
+      <div style="font-size:11px;color:#737373;margin-top:10px">${streak>=14?'Unstoppable':streak>=7?'On fire':streak>=3?'Building momentum':'Start your streak'}</div>
+    </div>
+  </div>
+
+  <div class="ov-section">
+    <div class="ov-label">Long run progression <span style="font-weight:400;color:#d4d4d2;text-transform:none;letter-spacing:0">green=done · dashed=upcoming · ring=this week</span></div>
+    ${longRunSVG()}
+  </div>
+
+  <div class="ov-section" style="display:grid;grid-template-columns:80px 1fr;gap:14px;align-items:center">
+    <div>${donutSVG(e,m,h)}</div>
+    <div>
+      <div class="ov-label">Effort split</div>
+      ${[['Easy','#4ade80',e],['Moderate','#fb923c',m],['Hard','#f87171',h]].map(([l,c,v])=>`
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0"></span>
+        <span style="font-size:12px;color:#525252;width:60px">${l}</span>
+        <div style="flex:1;height:4px;background:#f5f5f3;border-radius:999px;overflow:hidden">
+          <div style="width:${eff?Math.round(v/eff*100):0}%;height:100%;background:${c}"></div>
+        </div>
+        <span style="font-size:12px;font-weight:700;color:#1a1a1a;min-width:20px;text-align:right">${v}</span>
+      </div>`).join('')}
+      <div style="font-size:11px;color:#a3a3a3;margin-top:2px">Target: 75%+ easy effort in ultra training</div>
+    </div>
+  </div>
+
+  <div class="ov-section">
+    <div class="ov-label">Recovery — RHR &amp; sleep trends</div>
+    ${rhrSleepSVG()}
+  </div>
+
+  <div class="ov-section">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+      <div class="ov-label" style="margin:0">Cumulative miles</div>
+      <span style="font-size:20px;font-weight:700">${doneMi}<span style="font-size:12px;font-weight:400;color:#737373"> / ${totalMi}mi</span></span>
+    </div>
+    <div style="height:8px;background:#f0f0ef;border-radius:999px;overflow:hidden;margin-bottom:5px">
+      <div style="width:${miPct}%;height:100%;background:linear-gradient(90deg,#3b82f6,#22c55e);border-radius:999px;transition:width 0.4s"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:#d4d4d2">
+      <span>0</span><span>${Math.round(totalMi*.25)}</span><span>${Math.round(totalMi*.5)}</span><span>${Math.round(totalMi*.75)}</span><span>${totalMi}</span>
+    </div>
+  </div>
+
+  <div class="ov-section">
+    <div class="ov-label">Weight tracker <span style="font-weight:400;color:#d4d4d2;text-transform:none;letter-spacing:0">200 → 175 lbs goal</span></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+      <input type="number" id="wt-val" class="wt-input" placeholder="${lastWt||'lbs'}" step="0.5" min="100" max="400"/>
+      <button class="wt-log-btn" onclick="logWeight()">Log</button>
+      ${lastWt?`<span style="font-size:12px;color:#525252">Last: <strong>${lastWt} lbs</strong> · <span style="color:#22c55e;font-weight:600">${wtPct}% to goal</span></span>`:'<span style="font-size:12px;color:#a3a3a3">Enter your weight to start tracking</span>'}
+    </div>
+    ${lastWt?`<div style="height:5px;background:#f0f0ef;border-radius:999px;overflow:hidden;margin-bottom:4px"><div style="width:${wtPct}%;height:100%;background:#22c55e;border-radius:999px"></div></div>`:''}
+    ${wtSparkSVG()}
+  </div>
+
+  <div class="footer">
+    <button class="footer-btn" onclick="document.getElementById('file-input').click()">Re-import JSON</button>
+    <button class="footer-btn" onclick="clearData()">Clear data</button>
+  </div>
+  `;
+}
+</script>
+<div id="ex-modal" onclick="closeExModal(event)"><div id="ex-modal-inner"><div id="ex-modal-box"></div><div id="ex-modal-name"></div><a id="ex-yt-link" href="" target="_blank" style="display:inline-block;margin-bottom:10px;padding:6px 14px;background:#ff0000;color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">▶ Watch on YouTube</a><br><button class="ex-close-btn" onclick="document.getElementById('ex-modal').style.display='none'">Close</button></div></div></body>
+</html>
